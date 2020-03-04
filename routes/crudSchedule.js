@@ -1,0 +1,69 @@
+const {Router} = require('express')
+const Schedule = require('../models/schedule')
+
+const router = new Router()
+
+router.get('/', async (req, res) => {
+  res.render('schedule', {
+    title: "Schedule",
+    schedules: await Schedule.find().populate('scheduleAuthor', 'email name').select('week date')
+  })
+})
+
+router.get('/create', (req, res) => {
+  res.render('createSchedule', {
+    title: "Add new schedule"
+  })
+})
+
+router.get('/edit/:id', async (req, res) => {
+  try {
+    res.render('editSchedule', {
+      title: "Edit current schedule",
+      schedule: await Schedule.findById(req.params.id)
+    })
+  } catch (e) {
+    console.log(e);
+  }
+})
+
+router.post('/create', async (req, res) => {
+  try {
+    const newSchedule = new Schedule({
+      week: req.body.week,
+      scheduleAuthor: {
+        name: req.session.user.name,
+        userId: req.session.user._id
+      }
+    })
+
+    await newSchedule.save()
+    res.render('/schedule')
+  } catch (e) {
+    console.log(e)
+  }
+})
+
+router.post('/edit', async (req, res) => {
+  const {id} = req.body
+  try {
+      delete req.body.id
+      const schedule = await Schedule.findById(id)
+      Object.assign(schedule, req.body)
+      await schedule.save()
+      res.redirect('/schedule')
+  } catch(e) {
+      console.log(e)
+  }
+})
+
+router.post('/delete', async (req, res) => {
+  try {
+    await Schedule.deleteOne({_id: req.body.id})
+    res.redirect('/schedule')
+  } catch (e) {
+    console.log(e)
+  }
+})
+
+module.exports = router

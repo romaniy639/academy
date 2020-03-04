@@ -5,7 +5,7 @@ const mainRouter = require('./routes/main')
 const User = require('./models/user')
 const session = require('express-session')
 const authMiddleware = require('./middleware/auth')
-
+const scheduleRouter = require('./routes/crudSchedule')
 
 const PORT = 3000
 
@@ -27,15 +27,14 @@ app.use(session({
     saveUninitialized: false
 }))
 
-
-app.use(mainRouter)
 app.use(authMiddleware)
 
-
+app.use('/',mainRouter)
+app.use('/schedule', scheduleRouter)
 
 async function start() {
     try {
-        await mongoose.connect('mongodb+srv://romacin:v7vhSB48euWnYxtg@cluster0-msus2.mongodb.net/academy', {
+        await mongoose.connect('mongodb+srv://valik:ed2LxZkst8fukqZF@cluster0-msus2.mongodb.net/academy', {
             useNewUrlParser: true,
             useFindAndModify: false,
             useUnifiedTopology: true
@@ -57,4 +56,3 @@ async function start() {
 }
 
 start()
-
