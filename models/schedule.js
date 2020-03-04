@@ -6,9 +6,6 @@ module.exports = model('Schedule', new Schema({
       courseTeacher: {type: Schema.Types.ObjectId, ref: 'User', required: true},
       classroom: {type: String, require: true}
   }],
-  scheduleAuthor: {
-      name: {type: String, required: true},
-      userId: {type: Schema.Types.ObjectId, ref: 'User', required: true}
-  },
+  scheduleAuthor: {type: Schema.Types.ObjectId, ref: 'User', required: true},
   date: {type: Date, default: Date.now}
 }))

@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const mainRouter = require('./routes/main')
+const scheduleRouter = require('./routes/crudSchedule')
 
 const PORT = 3000
 
@@ -16,12 +17,13 @@ app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
 
-app.use(mainRouter)
+app.use('/',mainRouter)
+app.use('/schedule', scheduleRouter)
 
 
 async function start() {
     try {
-        await mongoose.connect('mongodb+srv://romacin:v7vhSB48euWnYxtg@cluster0-msus2.mongodb.net/academy', {
+        await mongoose.connect('mongodb+srv://valik:ed2LxZkst8fukqZF@cluster0-msus2.mongodb.net/academy', {
             useNewUrlParser: true,
             useFindAndModify: false,
             useUnifiedTopology: true
