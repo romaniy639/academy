@@ -2,6 +2,10 @@ const express = require('express')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const mainRouter = require('./routes/main')
+const User = require('./models/user')
+const session = require('express-session')
+const authMiddleware = require('./middleware/auth')
+
 
 const PORT = 3000
 
@@ -15,8 +19,18 @@ const hbs = exphbs.create({
 app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
+app.use(express.urlencoded({extended: true}))
+
+app.use(session({
+    secret: 'some secret value',
+    resave: false, 
+    saveUninitialized: false
+}))
+
 
 app.use(mainRouter)
+app.use(authMiddleware)
+
 
 
 async function start() {
@@ -29,9 +43,18 @@ async function start() {
         app.listen(PORT, () => {
             console.log("Server has been started...")
          })
+         
+        /*const admin = new User({
+            email: "admin@gmail.com",
+            name: "admin",
+            password: "admin"
+        }) 
+        await admin.save()*/
+
     } catch (e) {
         console.log(e)
     }
 }
 
 start()
+
