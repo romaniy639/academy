@@ -30,6 +30,7 @@ router.get('/edit/:id', async (req, res) => {
 router.post('/create', async (req, res) => {
   try {
     const newSchedule = new Schedule({
+      group: await Group.find({name: req.body.groupName}),
       week: req.body.week,
       scheduleAuthor: {
         name: req.session.user.name,
