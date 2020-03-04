@@ -61,16 +61,14 @@ router.post('/login', async (req,res)=> {
     if (candidate) {
         if (candidate.password === password) {
             req.session.isAuth = true
-            if (candidate.isTeacher){
+            if (candidate.isAdmin) {
+                req.session.isAdmin = true
+            } else if (candidate.isTeacher){
                 req.session.isAuthenticatedTeacher = true
-                req.session.user = candidate
             } else {
                 req.session.isAuthenticatedStudent = true
-                req.session.user = candidate
-            }
-            if (name === "admin") {
-                req.session.isAdmin = true
-            }
+            } 
+            req.session.user = candidate 
          } else {
              res.redirect('/login')
          }
