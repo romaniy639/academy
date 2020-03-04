@@ -28,7 +28,7 @@ app.use(session({
 
 
 
-app.use(mainRouter)
+app.use('/', mainRouter)
 app.use('/schedule', scheduleRouter)
 
 
@@ -43,13 +43,6 @@ async function start() {
         app.listen(PORT, () => {
             console.log("Server has been started...")
          })
-         
-        /*const admin = new User({
-            email: "admin@gmail.com",
-            name: "admin",
-            password: "admin"
-        }) 
-        await admin.save()*/
 
     } catch (e) {
         console.log(e)

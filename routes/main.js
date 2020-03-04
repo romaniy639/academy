@@ -14,29 +14,44 @@ router.get('/', (req,res)=> {
 })
 
 router.get('/login', (req,res)=> {
-    res.render('login', {
-        title: "Login",
-        isTeacher: req.session.isAuthenticatedTeacher,
-        isAdmin: req.session.isAdmin,
-        isAuth: req.session.isAuth  
-    })
+    if (!req.session.isAuth) {
+        res.render('login', {
+            title: "Login",
+            isTeacher: req.session.isAuthenticatedTeacher,
+            isAdmin: req.session.isAdmin,
+            isAuth: req.session.isAuth  
+        })
+    }
 })
 
 router.get('/register', authMiddleware, (req,res)=> {
     if (req.session.isAdmin) {
         res.render('register', {
-            title: "Register teacher",
+            title: "Add teacher",
             isAdmin: req.session.isAdmin,
-            isAuth: req.session.isAuth
+            isAuth: req.session.isAuth,
+            isTeacher: req.session.isAuthenticatedTeacher
         })
+    } else {
+        if (req.session.isAuthenticatedTeacher) {
+            res.render('register', {
+                title: "Add student",
+                isAdmin: req.session.isAdmin,
+                isAuth: req.session.isAuth,
+                isTeacher: req.session.isAuthenticatedTeacher
+            })
+        }
     }
 })
 
 router.get('/logout', async (req,res)=> {
+    if (req.session.isAuth) {
     req.session.destroy(() => {
         res.redirect('/login')
     })
+    }
 })
+
 
 router.post('/login', async (req,res)=> {
     try {
@@ -56,30 +71,46 @@ router.post('/login', async (req,res)=> {
             if (name === "admin") {
                 req.session.isAdmin = true
             }
+         } else {
+             res.redirect('/login')
          }
+         res.redirect('/')
     }
-    res.redirect('/')
     } catch (e) {
         console.log(e)
     }
 })
 
 router.post('/register', async (req,res)=> {
+    try {
     const name = req.body.username
     const password = req.body.password
     const email = req.body.email
+    if (req.session.isAdmin) {
     const user = new User({
-        name:name,
+        name: name,
         password: password,
         email: email,
         isTeacher: true
     })
     await user.save()
-
+    } else {
+        if (req.session.isAuthenticatedTeacher) {
+            const user = new User({
+                name: name,
+                password: password,
+                email: email,
+                isTeacher: false
+            })
+            await user.save() 
+        }
+    }
     res.redirect('/')
+    } catch (e) {
+        console.log(e)
+    }
+
 })
-
-
 
 
 module.exports = router
