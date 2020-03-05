@@ -3,6 +3,7 @@ const User = require('../models/user')
 const authMiddleware = require('../middleware/auth')
 const bcrypt = require('bcryptjs')
 const flash = require('connect-flash')
+const Group = require('../models/group')
 
 const router = new Router()
 
@@ -66,12 +67,13 @@ router.get('/profile', authMiddleware, async (req,res)=> {
     })
 })
 
-router.get('/add_avertisement', authMiddleware, (req,res)=> {
+router.get('/add_avertisement', authMiddleware, async (req,res)=> {
     res.render('advertisement', {
         title: "Advirtisement",
         isAdmin: req.session.isAdmin,
         isAuth: req.session.isAuth,
-        isTeacher: req.session.isAuthenticatedTeacher
+        isTeacher: req.session.isAuthenticatedTeacher,
+        groups: await Group.find()
     })
 
 })

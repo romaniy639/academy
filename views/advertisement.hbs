@@ -1,17 +1,19 @@
-<div class="col s6">
+<div class="col s6 offset" style="align-items: center;">
     <form  action="/advertisement" method="POST">
-      <div style="margin-top: 2rem; display:inline-flex" >
-        <h6 style="float: left;">Advertisement to group:</h6>
+      <div style="display:inline-flex" >
+        <h6 style="">Advertisement to group:</h6>
         <div class="input-field col s6" >
-          <select style="display: block; float: right;">
+          <select style="display: block;">
             <option value="" disabled selected>Choose group</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
+            {{#if groups.length}}
+              {{#each groups}}
+                <option value="{{_id}}">{{name}}</option>
+                {{/each}}
+            {{/if}}
           </select>
         </div>
       </div>
-      <div class="row" style="margin-top: 2rem;">
+      <div class="row" style="">
         <div class="input-field col s6">
           <textarea class="materialize-textarea"></textarea>
           <label>Message</label>
