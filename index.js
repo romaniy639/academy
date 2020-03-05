@@ -5,6 +5,7 @@ const mainRouter = require('./routes/main')
 const User = require('./models/user')
 const session = require('express-session')
 const scheduleRouter = require('./routes/crudSchedule')
+const groupRouter = require('./routes/group')
 
 const PORT = 3000
 
@@ -30,7 +31,7 @@ app.use(session({
 
 app.use('/', mainRouter)
 app.use('/schedule', scheduleRouter)
-
+app.use('/groups', groupRouter)
 
 
 async function start() {
