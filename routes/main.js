@@ -78,18 +78,27 @@ router.get('/add_avertisement', authMiddleware, async (req,res)=> {
 
 })
 
+router.post('/advertisement', authMiddleware, async (req,res)=> {
+    try {
+        if (req.body.group) {
+            await Group.findByIdAndUpdate(req.body.group, {$push: {'advertisement': req.body.message}})
+        }
+        res.redirect('/add_avertisement')
+    } catch (e) {
+        console.log(e)
+    }
+})
+
 router.post('/change_password', authMiddleware, async (req,res)=> {
     try {
         if (await bcrypt.compare(req.body.old_password, req.session.user.password)) {
             const hashPassword = bcrypt.hash(req.body.new_password,10)
             await User.findOneAndUpdate({name: req.session.user.name}, {password: (await hashPassword).toString()})
             req.flash('success', 'Password has been changed...')
-            res.redirect('/profile')
         } else {
             req.flash('error', 'Invalid old password')
-            res.redirect('/profile')
         }
-        
+        res.redirect('/profile') 
     } catch (e) {
         console.log(e)
     }
@@ -99,7 +108,6 @@ router.post('/change_password', authMiddleware, async (req,res)=> {
 router.post('/login', async (req,res)=> {
     try {
     const name = req.body.username
-    const password = req.body.password
     const candidate = await User.findOne({name})
     if (candidate) {
         if (await bcrypt.compare(req.body.password, candidate.password)) {

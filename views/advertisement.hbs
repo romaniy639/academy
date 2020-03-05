@@ -3,7 +3,7 @@
       <div style="display:inline-flex" >
         <h6 style="">Advertisement to group:</h6>
         <div class="input-field col s6" >
-          <select style="display: block;">
+          <select style="display: block;" name="group">
             <option value="" disabled selected>Choose group</option>
             {{#if groups.length}}
               {{#each groups}}
@@ -15,7 +15,7 @@
       </div>
       <div class="row" style="">
         <div class="input-field col s6">
-          <textarea class="materialize-textarea"></textarea>
+          <textarea class="materialize-textarea" name="message"></textarea>
           <label>Message</label>
           <button class= "btn waves-effect waves-light" style="margin-left: 0.2rem; margin-top: 0.6rem" type="submit">Send message</button>
         </div> 
