@@ -2,7 +2,7 @@
     <form class="col s12" action="/login" method="POST">
       <div class="row">
         <div class="input-field col s12">
-          <input type="text" class="validate" name="username">
+          <input type="text" class="validate" name="username" autofocus>
           <label for="disabled">Username</label>
         </div>
       </div>
@@ -12,6 +12,9 @@
           <label for="password">Password</label>
         </div>
       </div>
+          {{#if error_messages }}
+                <div class="red-text text-darken-2" style="margin-bottom: 1rem;">{{error_messages}}</div>
+          {{/if}}
        <button class="btn waves-effect waves-light" type="submit">Login
         </button>
     </form>
