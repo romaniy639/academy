@@ -5,6 +5,7 @@ const mainRouter = require('./routes/main')
 const User = require('./models/user')
 const session = require('express-session')
 const scheduleRouter = require('./routes/crudSchedule')
+const bcrypt = require('bcryptjs')
 
 const PORT = 3000
 

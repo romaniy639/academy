@@ -1,6 +1,7 @@
 const {Router} = require('express')
 const User = require('../models/user')
 const authMiddleware = require('../middleware/auth')
+const bcrypt = require('bcryptjs')
 
 const router = new Router()
 
@@ -59,7 +60,7 @@ router.post('/login', async (req,res)=> {
     const password = req.body.password
     const candidate = await User.findOne({name})
     if (candidate) {
-        if (candidate.password === password) {
+        if (await bcrypt.compare(req.body.password, candidate.password)) {
             req.session.isAuth = true
             if (candidate.isAdmin) {
                 req.session.isAdmin = true
@@ -85,18 +86,20 @@ router.post('/register', async (req,res)=> {
     const password = req.body.password
     const email = req.body.email
     if (req.session.isAdmin) {
+    const hashPassword = bcrypt.hash(req.body.password,10)
     const user = new User({
         name: name,
-        password: password,
+        password: (await hashPassword).toString(),
         email: email,
         isTeacher: true
     })
     await user.save()
     } else {
         if (req.session.isAuthenticatedTeacher) {
+            const hashPassword = bcrypt.hash(req.body.password,10)
             const user = new User({
                 name: name,
-                password: password,
+                password: (await hashPassword).toString(),
                 email: email,
                 isTeacher: false
             })
