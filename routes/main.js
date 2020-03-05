@@ -2,6 +2,7 @@ const {Router} = require('express')
 const User = require('../models/user')
 const authMiddleware = require('../middleware/auth')
 const bcrypt = require('bcryptjs')
+const flash = require('connect-flash')
 
 const router = new Router()
 
@@ -53,6 +54,35 @@ router.get('/logout', async (req,res)=> {
     }
 })
 
+router.get('/profile', authMiddleware, async (req,res)=> {
+    res.render('profile', {
+        title: "My profile",
+        isAdmin: req.session.isAdmin,
+        isAuth: req.session.isAuth,
+        isTeacher: req.session.isAuthenticatedTeacher,
+        name: req.session.user.name,
+        email: req.session.user.email,
+        password: req.session.user.password
+    })
+})
+
+router.post('/change_password', authMiddleware, async (req,res)=> {
+    try {
+        if (await bcrypt.compare(req.body.old_password, req.session.user.password)) {
+            const hashPassword = bcrypt.hash(req.body.new_password,10)
+            await User.findOneAndUpdate({name: req.session.user.name}, {password: (await hashPassword).toString()})
+            req.flash('success', 'Password has been changed...')
+            res.redirect('/profile')
+        } else {
+            req.flash('error', 'Invalid old password')
+            res.redirect('/profile')
+        }
+        
+    } catch (e) {
+        console.log(e)
+    }
+})
+
 
 router.post('/login', async (req,res)=> {
     try {
@@ -70,10 +100,14 @@ router.post('/login', async (req,res)=> {
                 req.session.isAuthenticatedStudent = true
             } 
             req.session.user = candidate 
+            res.redirect('/')
          } else {
-             res.redirect('/login')
+            req.flash('error', 'Invalid password or username')
+            res.redirect('/login')
          }
-         res.redirect('/')
+    } else {
+        req.flash('error', 'Invalid password or username')
+        res.redirect('/login')
     }
     } catch (e) {
         console.log(e)

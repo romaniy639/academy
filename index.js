@@ -6,6 +6,7 @@ const User = require('./models/user')
 const session = require('express-session')
 const scheduleRouter = require('./routes/crudSchedule')
 const bcrypt = require('bcryptjs')
+const flash = require('connect-flash')
 
 const PORT = 3000
 
@@ -28,9 +29,16 @@ app.use(session({
 }))
 
 
-
+app.use(flash())
+app.use((req, res, next) => {
+    res.locals.success_messages = req.flash('success')
+    res.locals.error_messages = req.flash('error')
+    next()
+  })
 app.use('/', mainRouter)
 app.use('/schedule', scheduleRouter)
+
+
 
 
 
