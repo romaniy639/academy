@@ -1,29 +1,28 @@
-<div class="col s6 offset" style="align-items: center;">
-    <form  action="/advertisement" method="POST">
-      <div style="display:inline-flex" >
-        <h6 style="">Advertisement to group:</h6>
-        <div class="input-field col s6" >
+<div class="row">
+  <div class="col s6 offset-s3">
+    <form action="/advertisement" method="POST">
+      <div style="width: 100%; display: flex;">
+        <p style="margin: auto 0;">Advertisement to group:</p>
+        <div class="input-field col s6">
           <select style="display: block;">
             <option value="" disabled selected>Choose group</option>
-            {{#if groups.length}}
-              {{#each groups}}
-                <option value="{{_id}}">{{name}}</option>
+              {{#if groups.length}}
+                {{#each groups}}
+                  <option value="{{_id}}">{{name}}</option>
                 {{/each}}
-            {{/if}}
+              {{/if}}
           </select>
         </div>
       </div>
-      <div class="row" style="">
-        <div class="input-field col s6">
-          <textarea class="materialize-textarea"></textarea>
-          <label>Message</label>
-          <button class= "btn waves-effect waves-light" style="margin-left: 0.2rem; margin-top: 0.6rem" type="submit">Send message</button>
-        </div> 
+      <div class="input-field col s6" style="width: 100%; display: flex;">
+        <textarea class="materialize-textarea"></textarea>
+        <label>Message</label>
+        <button class="btn waves-effect waves-light" type="submit">Send message</button>
       </div>
-      
-    </form>
-</div>
 
+    </form>
+  </div>
+</div>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('select');
