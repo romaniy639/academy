@@ -3,13 +3,19 @@
     {{#if group}}
     <form action="/groups/edit" method="POST">
       <p style="font-size: 2rem;"> Group name: <span style="font-weight: bold;">{{group.name}}</span></p>
-        <div class="input-field" style="display: flex;">
-          <input id="name" name="name" type="text" class="validate" value="{{group.name}}" required>
-          <label for="name">New group name</label>
-          <span class="helper-text" data-error="Enter valid group name"></span>
-          <input type="hidden" name="id" value="{{group._id}}">
-          <button class="btn btn-primary" type="submit">RENAME GROUP</button>
-        </div>
+      <div class="input-field" style="display: flex;">
+        <input id="name" name="name" type="text" class="validate" value="{{group.name}}" required>
+        <label for="name">New group name</label>
+        <span class="helper-text" data-error="Enter valid group name"></span>
+        <input type="hidden" name="id" value="{{group._id}}">
+        <button class="btn btn-primary" type="submit">RENAME GROUP</button>
+      </div>
+      {{#if success_messages }}
+        <div class="green-text text-darken-2">{{success_messages}}</div>
+      {{/if}}
+      {{#if error_messages }}
+        <div class="red-text text-darken-2">{{error_messages}}</div>
+      {{/if}}
     </form>
     {{else}}
       <p>Group does not exist!</p>
