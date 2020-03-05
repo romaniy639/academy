@@ -66,6 +66,16 @@ router.get('/profile', authMiddleware, async (req,res)=> {
     })
 })
 
+router.get('/add_avertisement', authMiddleware, (req,res)=> {
+    res.render('advertisement', {
+        title: "Advirtisement",
+        isAdmin: req.session.isAdmin,
+        isAuth: req.session.isAuth,
+        isTeacher: req.session.isAuthenticatedTeacher
+    })
+
+})
+
 router.post('/change_password', authMiddleware, async (req,res)=> {
     try {
         if (await bcrypt.compare(req.body.old_password, req.session.user.password)) {
