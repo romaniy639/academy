@@ -18,7 +18,7 @@ router.get('/', (req,res)=> {
 
 router.get('/login', (req,res)=> {
     if (!req.session.isAuth) {
-        res.render('login', {
+        res.render('auth/login', {
             title: "Login",
             isTeacher: req.session.isAuthenticatedTeacher,
             isAdmin: req.session.isAdmin,
@@ -29,7 +29,7 @@ router.get('/login', (req,res)=> {
 
 router.get('/register', authMiddleware, (req,res)=> {
     if (req.session.isAdmin) {
-        res.render('register', {
+        res.render('auth/register', {
             title: "Add teacher",
             isAdmin: req.session.isAdmin,
             isAuth: req.session.isAuth,
@@ -37,7 +37,7 @@ router.get('/register', authMiddleware, (req,res)=> {
         })
     } else {
         if (req.session.isAuthenticatedTeacher) {
-            res.render('register', {
+            res.render('auth/register', {
                 title: "Add student",
                 isAdmin: req.session.isAdmin,
                 isAuth: req.session.isAuth,
@@ -47,11 +47,11 @@ router.get('/register', authMiddleware, (req,res)=> {
     }
 })
 
-router.get('/logout', async (req,res)=> {
+router.get('/logout', async (req, res) => {
     if (req.session.isAuth) {
-    req.session.destroy(() => {
-        res.redirect('/login')
-    })
+        req.session.destroy(() => {
+            res.redirect('/login')
+        })
     }
 })
 
@@ -65,28 +65,6 @@ router.get('/profile', authMiddleware, async (req,res)=> {
         email: req.session.user.email,
         password: req.session.user.password
     })
-})
-
-router.get('/add_avertisement', authMiddleware, async (req,res)=> {
-    res.render('advertisement', {
-        title: "Advirtisement",
-        isAdmin: req.session.isAdmin,
-        isAuth: req.session.isAuth,
-        isTeacher: req.session.isAuthenticatedTeacher,
-        groups: await Group.find()
-    })
-
-})
-
-router.post('/advertisement', authMiddleware, async (req,res)=> {
-    try {
-        if (req.body.group) {
-            await Group.findByIdAndUpdate(req.body.group, {$push: {'advertisement': req.body.message}})
-        }
-        res.redirect('/add_avertisement')
-    } catch (e) {
-        console.log(e)
-    }
 })
 
 router.post('/change_password', authMiddleware, async (req,res)=> {

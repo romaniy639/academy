@@ -4,21 +4,21 @@ const Schedule = require('../models/schedule')
 const router = new Router()
 
 router.get('/', async (req, res) => {
-  res.render('schedule', {
+  res.render('schedule/show', {
     title: "Schedule",
     schedules: await Schedule.find().populate('scheduleAuthor', 'email name').select('week date')
   })
 })
 
 router.get('/create', (req, res) => {
-  res.render('createSchedule', {
+  res.render('schedule/create', {
     title: "Add new schedule"
   })
 })
 
 router.get('/edit/:id', async (req, res) => {
   try {
-    res.render('editSchedule', {
+    res.render('schedule/edit', {
       title: "Edit current schedule",
       schedule: await Schedule.findById(req.params.id)
     })

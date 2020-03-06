@@ -6,7 +6,7 @@ const flash = require('connect-flash')
 const router = new Router()
 
 router.get('/', authMiddleware, async (req, res) => {
-  res.render('groups', {
+  res.render('groups/show-reg-notify', {
     title: "Groups management",
     groups: await Group.find(),
     isTeacher: req.session.isAuthenticatedTeacher,
@@ -17,7 +17,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
 router.get('/edit/:id', authMiddleware, async (req, res) => {
   try {
-    res.render('editGroup', {
+    res.render('groups/edit', {
       title: "Edit current group",
       group: await Group.findById(req.params.id),
       isTeacher: req.session.isAuthenticatedTeacher,
@@ -29,11 +29,38 @@ router.get('/edit/:id', authMiddleware, async (req, res) => {
   }
 })
 
+router.get('/add_notification', authMiddleware, async (req,res)=> {
+  res.render('groups/notification', {
+      title: "Notification",
+      isAdmin: req.session.isAdmin,
+      isAuth: req.session.isAuth,
+      isTeacher: req.session.isAuthenticatedTeacher,
+      groups: await Group.find()
+  })
+
+})
+
+router.post('/notification', authMiddleware, async (req,res)=> {
+  try {
+      if (req.body.group) {
+          await Group.findByIdAndUpdate(req.body.group, {$push: {notification: req.body.message}})
+      }
+      res.redirect('/add_notification')
+  } catch (e) {
+      console.log(e)
+  }
+})
+
 router.post('/create', authMiddleware, async (req, res) => {
   try {
-    const newGroup = new Group({name: req.body.groupName})
-    await newGroup.save()
-    res.redirect('/groups')
+    if (!(await Group.findOne({name: req.body.name}))) {
+      const newGroup = new Group({name: req.body.name})
+      await newGroup.save()
+      res.redirect('/groups/edit/'+newGroup._id)
+    } else {
+      req.flash('error', 'Group with this name is already exist...')
+      res.redirect('/groups#createGroup')
+    }
   } catch (e) {
     console.log(e)
   }
@@ -43,10 +70,7 @@ router.post('/edit', authMiddleware, async (req, res) => {
   try {
     const {id} = req.body
     if (!(await Group.findOne({name: req.body.name}))) {
-      delete req.body.id
-      const group = await Group.findById(id)
-      Object.assign(group, req.body)
-      await group.save()
+      await Group.findByIdAndUpdate(id, {name: req.body.name})
       req.flash('success', 'Group has been renamed...')
     } else {
       req.flash('error', 'Group with this name is already exist...')
