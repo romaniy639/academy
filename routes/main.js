@@ -8,7 +8,7 @@ const Group = require('../models/group')
 const router = new Router()
 
 
-router.get('/', async (req,res)=> {
+router.get('/', authMiddleware , async (req,res)=> {
     res.render('index', {
         isAuth: req.session.isAuth,
         isTeacher: (await User.findById(req.session.userId)).role === "teacher",
@@ -22,8 +22,6 @@ router.get('/login', async (req,res)=> {
         res.render('auth/login', {
             title: "Login",
             isAuth: req.session.isAuth
-            /*isTeacher: (await User.findById(req.session.userId)).role === "teacher",
-            isAdmin: (await User.findById(req.session.userId)).role === "admin",  */
         })
     }
 })
@@ -62,43 +60,18 @@ router.get('/profile', authMiddleware, async (req,res)=> {
         isAdmin: (await User.findById(req.session.userId)).role === "admin",
         isAuth: req.session.isAuth,
         isTeacher: (await User.findById(req.session.userId)).role === "teacher",
-        /*name: req.session.user.name,
-        email: req.session.user.email,
-        password: req.session.user.password*/
+        name: (await User.findById(req.session.userId)).name,
+        email: (await User.findById(req.session.userId)).email,
+        password: (await User.findById(req.session.userId)).password
     })
 })
 
-<<<<<<< HEAD
-=======
-router.get('/add_avertisement', authMiddleware, async (req,res)=> {
-    res.render('advertisement', {
-        title: "Advirtisement",
-        isAdmin: (await User.findById(req.session.userId)).role === "admin",
-        isAuth: req.session.isAuth,
-        isTeacher: (await User.findById(req.session.userId)).role === "teacher",
-        groups: await Group.find()
-    })
-
-})
-
-router.post('/advertisement', authMiddleware, async (req,res)=> {
-    try {
-        if (req.body.group) {
-            await Group.findByIdAndUpdate(req.body.group, {$push: {'advertisement': req.body.message}})
-        }
-        res.redirect('/add_avertisement')
-    } catch (e) {
-        console.log(e)
-    }
-})
-
->>>>>>> db001c7b4848391ca2da6cc2ccf05732080b3969
 router.post('/change_password', authMiddleware, async (req,res)=> {
     try {
-        const old_user_password = (await User.findById(ObjectId(req.session.id))).password
+        const old_user_password = (await User.findById(req.session.userId)).password
         if (await bcrypt.compare(req.body.old_password, old_user_password)) {
             const hashPassword = bcrypt.hash(req.body.new_password,10)
-            await User.findOneAndUpdate({_id: ObjectId(req.session.id)}, {password: (await hashPassword).toString()})
+            await User.findOneAndUpdate({_id: req.session.userId}, {password: (await hashPassword).toString()})
             req.flash('success', 'Password has been changed...')
         } else {
             req.flash('error', 'Invalid old password')
@@ -125,7 +98,6 @@ router.post('/login', async (req,res)=> {
             } else {
                 req.session.isAuthenticatedStudent = true
             } 
-            //req.session.user = candidate 
             res.redirect('/')
          } else {
             req.flash('error', 'Invalid password or username')

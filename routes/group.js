@@ -33,9 +33,9 @@ router.get('/edit/:id', authMiddleware, async (req, res) => {
 router.get('/add_notification', authMiddleware, async (req,res)=> {
   res.render('groups/notification', {
       title: "Notification",
-      isAdmin: req.session.isAdmin,
       isAuth: req.session.isAuth,
-      isTeacher: req.session.isAuthenticatedTeacher,
+      isTeacher: (await User.findById(req.session.userId)).role === "teacher",
+      isAdmin: (await User.findById(req.session.userId)).role === "admin",
       groups: await Group.find()
   })
 
