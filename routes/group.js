@@ -18,12 +18,15 @@ router.get('/', authMiddleware, async (req, res) => {
 
 router.get('/edit/:id', authMiddleware, async (req, res) => {
   try {
+    const students = (await User.find({role: "student"})).filter(c => !c.group)
     res.render('groups/edit', {
       title: "Edit current group",
       group: await Group.findById(req.params.id),
       isTeacher: (await User.findById(req.session.userId)).role === "teacher",
       isAdmin: (await User.findById(req.session.userId)).role === "admin",
       isAuth: req.session.isAuth,
+      students,
+      group_students: (await Group.findById(req.params.id).populate('students', 'name').select('name')).students
     })
   } catch (e) {
     console.log(e);
@@ -36,9 +39,23 @@ router.get('/add_notification', authMiddleware, async (req,res)=> {
       isAuth: req.session.isAuth,
       isTeacher: (await User.findById(req.session.userId)).role === "teacher",
       isAdmin: (await User.findById(req.session.userId)).role === "admin",
-      groups: await Group.find()
+      groups: await Group.find(),
   })
+})
 
+router.post('/add_student', authMiddleware, async (req,res)=> {
+  try {
+    if (req.body.student) {
+      const candidate = await User.findById(req.body.student)
+      if (!candidate.group) {
+        await Group.findByIdAndUpdate(req.body.id, {$push: {'students': req.body.student}})
+        await User.findByIdAndUpdate(req.body.student, {group: req.body.id})
+      }
+    }
+    res.redirect('/groups/edit/' + req.body.id)
+  } catch (e) {
+    console.log(e)
+  }
 })
 
 router.post('/notification', authMiddleware, async (req,res)=> {
