@@ -4,9 +4,9 @@ const exphbs = require('express-handlebars')
 const session = require('express-session')
 const flash = require('connect-flash')
 const keys = require('./keys')
-const mainRouter = require('./routes/main')
+const authRouter = require('./routes/auth')
 const groupRouter = require('./routes/group')
-const scheduleRouter = require('./routes/crudSchedule')
+const scheduleRouter = require('./routes/schedule')
 
 const PORT = 3000
 
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
     res.locals.error_messages = req.flash('error')
     next()
   })
-app.use('/', mainRouter)
+app.use('/', authRouter)
 app.use('/schedule', scheduleRouter)
 app.use('/groups', groupRouter)
 

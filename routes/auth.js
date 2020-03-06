@@ -27,7 +27,7 @@ router.get('/login', async (req,res)=> {
 })
 
 router.get('/register', authMiddleware, async (req,res)=> {
-    if (req.session.isAdmin) {
+    if ((await User.findById(req.session.userId)).role === "admin") {
         res.render('auth/register', {
             title: "Add teacher",
             isAdmin: (await User.findById(req.session.userId)).role === "admin",
@@ -35,7 +35,7 @@ router.get('/register', authMiddleware, async (req,res)=> {
             isTeacher: (await User.findById(req.session.userId)).role === "teacher"
         })
     } else {
-        if (req.session.isAuthenticatedTeacher) {
+        if ((await User.findById(req.session.userId)).role === "teacher") {
             res.render('auth/register', {
                 title: "Add student",
                 isAdmin: (await User.findById(req.session.userId)).role === "admin",

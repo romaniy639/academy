@@ -46,7 +46,7 @@ router.post('/notification', authMiddleware, async (req,res)=> {
       if (req.body.group) {
           await Group.findByIdAndUpdate(req.body.group, {$push: {notification: req.body.message}})
       }
-      res.redirect('/add_notification')
+      res.redirect('/groups/add_notification')
   } catch (e) {
       console.log(e)
   }
