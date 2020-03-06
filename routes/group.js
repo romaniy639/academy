@@ -12,7 +12,7 @@ router.get('/', authMiddleware, async (req, res) => {
     groups: await Group.find(),
     isTeacher: (await User.findById(req.session.userId)).role === "teacher",
     isAdmin: (await User.findById(req.session.userId)).role === "admin",
-    isAuth: req.session.isAuth,
+    isAuth: req.session.isAuth
   })
 })
 
@@ -29,7 +29,7 @@ router.get('/edit/:id', authMiddleware, async (req, res) => {
       group_students: (await Group.findById(req.params.id).populate('students', 'name').select('name')).students
     })
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
 })
 
@@ -63,7 +63,7 @@ router.post('/notification', authMiddleware, async (req,res)=> {
       if (req.body.group) {
           await Group.findByIdAndUpdate(req.body.group, {$push: {notification: req.body.message}})
       }
-      res.redirect('/groups/add_notification')
+      res.redirect('/groups#addNotification')
   } catch (e) {
       console.log(e)
   }

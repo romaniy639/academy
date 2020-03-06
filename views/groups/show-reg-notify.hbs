@@ -2,10 +2,12 @@
     <div class="row">
         <div class="col s12">
             <ul class="tabs">
-                <li class="tab col s6"><a class="active" href="#showGroups">Show groups</a></li>
-                <li class="tab col s6"><a href="#createGroup">Add new group</a></li>
+                <li class="tab col s4"><a class="active" href="#showGroups">Show groups</a></li>
+                <li class="tab col s4"><a href="#createGroup">Add new group</a></li>
+                <li class="tab col s4"><a href="#addNotification">Add group notification</a></li>
             </ul>
         </div>
+
         <div id="showGroups" class="col s6 offset-s3">
         {{#if groups.length}}
             <div class="collection">
@@ -17,6 +19,7 @@
             <p>No groups availabel!</p>
         {{/if}}
         </div>
+        
         <div id="createGroup" class="col s6 offset-s3">
             <form action="/groups/create" method="POST">
                 <div class="input-field">
@@ -30,9 +33,33 @@
                 <button type="submit" class="btn btn-primary">REGISTER NEW GROUP</button>
             </form>
         </div>
+        
+        <div id="addNotification" class="col s6 offset-s3">
+            <form action="/groups/notification" method="POST">
+                <div style="width: 100%; display: flex;">
+                    <p style="margin: auto 0;">Notification to group:</p>
+                    <div class="input-field col s6">
+                        <select name="group" style="display: block;">
+                            <option value="" disabled selected>Choose group</option>
+                            {{#if groups.length}}
+                                {{#each groups}}
+                                    <option value="{{_id}}">{{name}}</option>
+                                {{/each}}
+                            {{/if}}
+                        </select>
+                    </div>
+                </div>
+                <div class="input-field col s6" style="width: 100%; display: flex;">
+                    <textarea name="message" class="materialize-textarea"></textarea>
+                    <label>Message</label>
+                    <button class="btn waves-effect waves-light" type="submit">Send message</button>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
 
 <script>
-  M.Tabs.init(document.querySelectorAll('.tabs'))
+    M.Tabs.init(document.querySelectorAll('.tabs'))
 </script>
