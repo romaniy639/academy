@@ -1,13 +1,12 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
-const mainRouter = require('./routes/main')
-const User = require('./models/user')
 const session = require('express-session')
-const scheduleRouter = require('./routes/crudSchedule')
-const groupRouter = require('./routes/group')
-const bcrypt = require('bcryptjs')
 const flash = require('connect-flash')
+const keys = require('./keys')
+const mainRouter = require('./routes/main')
+const groupRouter = require('./routes/group')
+const scheduleRouter = require('./routes/crudSchedule')
 
 const PORT = 3000
 
@@ -24,7 +23,7 @@ app.set('views', 'views')
 app.use(express.urlencoded({extended: true}))
 
 app.use(session({
-    secret: 'some secret value',
+    secret: keys.SESSION_SECRET,
     resave: false, 
     saveUninitialized: false
 }))
@@ -45,7 +44,7 @@ app.use('/groups', groupRouter)
 
 async function start() {
     try {
-        await mongoose.connect('mongodb+srv://valik:ed2LxZkst8fukqZF@cluster0-msus2.mongodb.net/academy', {
+        await mongoose.connect(keys.MONGODB_URI, {
             useNewUrlParser: true,
             useFindAndModify: false,
             useUnifiedTopology: true
