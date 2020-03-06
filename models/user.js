@@ -4,8 +4,7 @@ module.exports = model('User', new Schema({
   email: {type: String, required: true},
   name: {type: String, required: true},
   password: {type: String, required: true},
-  isTeacher: {type: Boolean, default: false},
-  isAdmin: {type: Boolean, default: false},
+  group: {type: Schema.Types.ObjectId, ref: 'Group'},
   resetToken: {type: String},
   resetTokenExp: {type: Date}
 }))
