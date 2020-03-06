@@ -7,41 +7,42 @@ const Group = require('../models/group')
 
 const router = new Router()
 
-router.get('/', (req,res)=> {
+
+router.get('/', async (req,res)=> {
     res.render('index', {
-        isTeacher: req.session.isAuthenticatedTeacher,
-        isAdmin: req.session.isAdmin,
         isAuth: req.session.isAuth,
+        isTeacher: (await User.findById(req.session.userId)).role === "teacher",
+        isAdmin: (await User.findById(req.session.userId)).role === "admin",
         title: "Academy"
     })
 })
 
-router.get('/login', (req,res)=> {
+router.get('/login', async (req,res)=> {
     if (!req.session.isAuth) {
         res.render('login', {
             title: "Login",
-            isTeacher: req.session.isAuthenticatedTeacher,
-            isAdmin: req.session.isAdmin,
-            isAuth: req.session.isAuth  
+            isAuth: req.session.isAuth
+            /*isTeacher: (await User.findById(req.session.userId)).role === "teacher",
+            isAdmin: (await User.findById(req.session.userId)).role === "admin",  */
         })
     }
 })
 
-router.get('/register', authMiddleware, (req,res)=> {
+router.get('/register', authMiddleware, async (req,res)=> {
     if (req.session.isAdmin) {
         res.render('register', {
             title: "Add teacher",
-            isAdmin: req.session.isAdmin,
+            isAdmin: (await User.findById(req.session.userId)).role === "admin",
             isAuth: req.session.isAuth,
-            isTeacher: req.session.isAuthenticatedTeacher
+            isTeacher: (await User.findById(req.session.userId)).role === "teacher"
         })
     } else {
         if (req.session.isAuthenticatedTeacher) {
             res.render('register', {
                 title: "Add student",
-                isAdmin: req.session.isAdmin,
+                isAdmin: (await User.findById(req.session.userId)).role === "admin",
                 isAuth: req.session.isAuth,
-                isTeacher: req.session.isAuthenticatedTeacher
+                isTeacher: (await User.findById(req.session.userId)).role === "teacher"
             })
         }
     }
@@ -58,21 +59,21 @@ router.get('/logout', async (req,res)=> {
 router.get('/profile', authMiddleware, async (req,res)=> {
     res.render('profile', {
         title: "My profile",
-        isAdmin: req.session.isAdmin,
+        isAdmin: (await User.findById(req.session.userId)).role === "admin",
         isAuth: req.session.isAuth,
-        isTeacher: req.session.isAuthenticatedTeacher,
-        name: req.session.user.name,
+        isTeacher: (await User.findById(req.session.userId)).role === "teacher",
+        /*name: req.session.user.name,
         email: req.session.user.email,
-        password: req.session.user.password
+        password: req.session.user.password*/
     })
 })
 
 router.get('/add_avertisement', authMiddleware, async (req,res)=> {
     res.render('advertisement', {
         title: "Advirtisement",
-        isAdmin: req.session.isAdmin,
+        isAdmin: (await User.findById(req.session.userId)).role === "admin",
         isAuth: req.session.isAuth,
-        isTeacher: req.session.isAuthenticatedTeacher,
+        isTeacher: (await User.findById(req.session.userId)).role === "teacher",
         groups: await Group.find()
     })
 
@@ -91,9 +92,10 @@ router.post('/advertisement', authMiddleware, async (req,res)=> {
 
 router.post('/change_password', authMiddleware, async (req,res)=> {
     try {
-        if (await bcrypt.compare(req.body.old_password, req.session.user.password)) {
+        const old_user_password = (await User.findById(ObjectId(req.session.id))).password
+        if (await bcrypt.compare(req.body.old_password, old_user_password)) {
             const hashPassword = bcrypt.hash(req.body.new_password,10)
-            await User.findOneAndUpdate({name: req.session.user.name}, {password: (await hashPassword).toString()})
+            await User.findOneAndUpdate({_id: ObjectId(req.session.id)}, {password: (await hashPassword).toString()})
             req.flash('success', 'Password has been changed...')
         } else {
             req.flash('error', 'Invalid old password')
@@ -112,6 +114,7 @@ router.post('/login', async (req,res)=> {
     if (candidate) {
         if (await bcrypt.compare(req.body.password, candidate.password)) {
             req.session.isAuth = true
+            req.session.userId = candidate._id
             if (candidate.isAdmin) {
                 req.session.isAdmin = true
             } else if (candidate.isTeacher){
@@ -119,7 +122,7 @@ router.post('/login', async (req,res)=> {
             } else {
                 req.session.isAuthenticatedStudent = true
             } 
-            req.session.user = candidate 
+            //req.session.user = candidate 
             res.redirect('/')
          } else {
             req.flash('error', 'Invalid password or username')
@@ -139,23 +142,24 @@ router.post('/register', async (req,res)=> {
     const name = req.body.username
     const password = req.body.password
     const email = req.body.email
-    if (req.session.isAdmin) {
-    const hashPassword = bcrypt.hash(req.body.password,10)
+    const user_role = (await User.findById(req.session.userId)).role
+    if (user_role === "admin") {
+    const hashPassword = bcrypt.hash(req.body.password, 10)
     const user = new User({
         name: name,
         password: (await hashPassword).toString(),
         email: email,
-        isTeacher: true
+        role: "teacher"
     })
     await user.save()
     } else {
-        if (req.session.isAuthenticatedTeacher) {
+        if (user_role === "teacher") {
             const hashPassword = bcrypt.hash(req.body.password,10)
             const user = new User({
                 name: name,
                 password: (await hashPassword).toString(),
                 email: email,
-                isTeacher: false
+                role: "student"
             })
             await user.save() 
         }
@@ -166,6 +170,5 @@ router.post('/register', async (req,res)=> {
     }
 
 })
-
 
 module.exports = router

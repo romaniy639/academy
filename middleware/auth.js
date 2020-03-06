@@ -1,7 +1,6 @@
 module.exports = function(req,res,next){
-    if (!(req.session.isAuthenticatedTeacher || req.session.isAuthenticatedStudent || req.session.isAdmin)) {
+    if (!req.session.isAuth) {
         return res.redirect('/login')
     } 
-
     next()
 }

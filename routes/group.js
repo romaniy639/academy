@@ -2,6 +2,7 @@ const {Router} = require('express')
 const Group = require('../models/group')
 const authMiddleware = require('../middleware/auth')
 const flash = require('connect-flash')
+const User = require('../models/user')
 
 const router = new Router()
 
@@ -9,8 +10,8 @@ router.get('/', authMiddleware, async (req, res) => {
   res.render('groups', {
     title: "Groups management",
     groups: await Group.find(),
-    isTeacher: req.session.isAuthenticatedTeacher,
-    isAdmin: req.session.isAdmin,
+    isTeacher: (await User.findById(req.session.userId)).role === "teacher",
+    isAdmin: (await User.findById(req.session.userId)).role === "admin",
     isAuth: req.session.isAuth,
   })
 })
@@ -20,8 +21,8 @@ router.get('/edit/:id', authMiddleware, async (req, res) => {
     res.render('editGroup', {
       title: "Edit current group",
       group: await Group.findById(req.params.id),
-      isTeacher: req.session.isAuthenticatedTeacher,
-      isAdmin: req.session.isAdmin,
+      isTeacher: (await User.findById(req.session.userId)).role === "teacher",
+      isAdmin: (await User.findById(req.session.userId)).role === "admin",
       isAuth: req.session.isAuth,
     })
   } catch (e) {
