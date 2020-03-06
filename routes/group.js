@@ -12,7 +12,7 @@ router.get('/', authMiddleware, async (req, res) => {
     groups: await Group.find(),
     isTeacher: (await User.findById(req.session.userId)).role === "teacher",
     isAdmin: (await User.findById(req.session.userId)).role === "admin",
-    isAuth: req.session.isAuth,
+    isAuth: req.session.isAuth
   })
 })
 
@@ -23,22 +23,11 @@ router.get('/edit/:id', authMiddleware, async (req, res) => {
       group: await Group.findById(req.params.id),
       isTeacher: (await User.findById(req.session.userId)).role === "teacher",
       isAdmin: (await User.findById(req.session.userId)).role === "admin",
-      isAuth: req.session.isAuth,
+      isAuth: req.session.isAuth
     })
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
-})
-
-router.get('/add_notification', authMiddleware, async (req,res)=> {
-  res.render('groups/notification', {
-      title: "Notification",
-      isAuth: req.session.isAuth,
-      isTeacher: (await User.findById(req.session.userId)).role === "teacher",
-      isAdmin: (await User.findById(req.session.userId)).role === "admin",
-      groups: await Group.find()
-  })
-
 })
 
 router.post('/notification', authMiddleware, async (req,res)=> {
@@ -46,7 +35,7 @@ router.post('/notification', authMiddleware, async (req,res)=> {
       if (req.body.group) {
           await Group.findByIdAndUpdate(req.body.group, {$push: {notification: req.body.message}})
       }
-      res.redirect('/groups/add_notification')
+      res.redirect('/groups#addNotification')
   } catch (e) {
       console.log(e)
   }
