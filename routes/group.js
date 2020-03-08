@@ -102,13 +102,9 @@ router.post('/edit', authMiddleware, teacherMiddleware, async (req, res) => {
 
 router.post('/delete', authMiddleware, teacherMiddleware, async (req, res) => {
   try {
-
-
-
-
-    
-    await Group.deleteOne({_id: req.body.id})
-    res.redirect('groups')
+    await User.updateMany({group: req.body.id}, {$unset: {group: ""}})
+    await Group.findByIdAndDelete(req.body.id)
+    res.redirect('/groups')
   } catch (e) {
     console.log(e)
   }

@@ -12,7 +12,18 @@
         {{#if groups.length}}
             <div class="collection">
             {{#each groups}}
-                <a href="/groups/edit/{{_id}}" class="collection-item">{{name}}</a>
+                <div style="display: flex; justify-content: space-between;">
+                    <a href="/groups/edit/{{_id}}" class="collection-item" style="width: 100%;">
+                        {{name}}
+                    </a>
+                    
+                    <form action="/groups/delete" method="post">
+                        <input type="hidden" name="id" value="{{_id}}">
+                        <button type="submit" class="btn waves-effect waves-light" style="height: 100%;">
+                            <i class="material-icons">delete_forever</i>
+                        </button>
+                    </form>
+                </div>
             {{/each}}
             </div>
         {{else}}
