@@ -9,11 +9,17 @@ const router = new Router()
 
 
 router.get('/', authMiddleware , async (req,res)=> {
+    const user_role = (await User.findById(req.session.userId)).role
+    let notifications = []
+    if (user_role === "student") {
+        notifications = (await User.findById(req.session.userId)).notification
+    }
     res.render('index', {
         isAuth: req.session.isAuth,
         isTeacher: (await User.findById(req.session.userId)).role === "teacher",
         isAdmin: (await User.findById(req.session.userId)).role === "admin",
-        title: "Academy"
+        title: "Academy",
+        notifications
     })
 })
 

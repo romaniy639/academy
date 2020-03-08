@@ -62,7 +62,16 @@ router.post('/add_student', authMiddleware, teacherMiddleware, async (req,res)=>
 router.post('/notification', authMiddleware, teacherMiddleware, async (req,res)=> {
   try {
       if (req.body.group) {
-          await Group.findByIdAndUpdate(req.body.group, {$push: {notification: req.body.message}})
+          //await Group.findByIdAndUpdate(req.body.group, {$push: {notification: req.body.message}})
+          const students = await Group.findById(req.body.group)
+          for (let student of students.students) {
+            const teacherName = (await User.findById(req.session.userId)).name
+            const message = {
+              author: teacherName,
+              message: req.body.message
+            }
+            await User.findByIdAndUpdate(student, {$push: {notification: message}})
+          }
       }
       res.redirect('/groups#addNotification')
   } catch (e) {
