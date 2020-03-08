@@ -7,26 +7,28 @@ const User = require('../models/user')
 
 const router = new Router()
 
-router.get('/', authMiddleware, teacherMiddleware, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
+  const {role} = await User.findById(req.session.userId)
   res.render('groups/show-reg-notify', {
-    title: "Groups management",
+    title: (role==="teacher") ? "Groups management" : "Groups",
     groups: await Group.find(),
-    isTeacher: (await User.findById(req.session.userId)).role === "teacher",
-    isAdmin: (await User.findById(req.session.userId)).role === "admin",
+    isTeacher: role === "teacher",
+    isAdmin: role === "admin",
     isAuth: req.session.isAuth
   })
 })
 
-router.get('/:id', authMiddleware, teacherMiddleware, async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
   try {
-    const students = (await User.find({role: "student"})).filter(c => !c.group)
+    const group = await Group.findById(req.params.id)
+    if (!group) return res.redirect('/groups')
     res.render('groups/edit', {
       title: "Group",
-      group: await Group.findById(req.params.id),
+      group,
       isTeacher: (await User.findById(req.session.userId)).role === "teacher",
       isAdmin: (await User.findById(req.session.userId)).role === "admin",
       isAuth: req.session.isAuth,
-      students,
+      students: (await User.find({role: "student"})).filter(c => !c.group),
       group_students: (await Group.findById(req.params.id).populate('students', 'name').select('name')).students
     })
   } catch (e) {
