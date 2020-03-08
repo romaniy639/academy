@@ -1,33 +1,33 @@
 const {Router} = require('express')
+const {validationResult} = require('express-validator/check')
 const User = require('../models/user')
 const authMiddleware = require('../middleware/auth')
 const bcrypt = require('bcryptjs')
 const flash = require('connect-flash')
-const Group = require('../models/group')
+const {loginValidators, registerValidators, changePasswordValidators} = require('../utils/validators')
 
 const router = new Router()
 
-
 router.get('/', authMiddleware , async (req,res)=> {
-    const user_role = (await User.findById(req.session.userId)).role
+    const user = await User.findById(req.session.userId)
     let notifications = []
-    if (user_role === "student") {
-        notifications = (await User.findById(req.session.userId)).notification
+    if (user.role === 'student') {
+        notifications = user.notification
     }
     res.render('index', {
+        title: 'Academy',
+        isTeacher: user.role === 'teacher',
+        isAdmin: user.role === 'admin',
         isAuth: req.session.isAuth,
-        isTeacher: (await User.findById(req.session.userId)).role === "teacher",
-        isAdmin: (await User.findById(req.session.userId)).role === "admin",
-        title: "Academy",
         notifications
     })
-    await User.findByIdAndUpdate(req.session.userId, {$unset: {notification: ""}})
+    await User.findByIdAndUpdate(req.session.userId, {$unset: {notification: ''}})
 })
 
 router.get('/login', async (req,res)=> {
     if (!req.session.isAuth) {
         res.render('auth/login', {
-            title: "Login",
+            title: 'Login',
             isAuth: req.session.isAuth
         })
     } else {
@@ -36,51 +36,47 @@ router.get('/login', async (req,res)=> {
 })
 
 router.get('/register', authMiddleware, async (req,res)=> {
-    if ((await User.findById(req.session.userId)).role === "admin") {
+    const userRole = (await User.findById(req.session.userId)).role
+    if (userRole === 'admin' || userRole === 'teacher') {
         res.render('auth/register', {
-            title: "Add teacher",
-            isAdmin: (await User.findById(req.session.userId)).role === "admin",
-            isAuth: req.session.isAuth,
-            isTeacher: (await User.findById(req.session.userId)).role === "teacher"
-        })
-    } else {
-        if ((await User.findById(req.session.userId)).role === "teacher") {
-            res.render('auth/register', {
-                title: "Add student",
-                isAdmin: (await User.findById(req.session.userId)).role === "admin",
-                isAuth: req.session.isAuth,
-                isTeacher: (await User.findById(req.session.userId)).role === "teacher"
-            })
-        }
-    }
-})
-
-router.get('/logout', async (req, res) => {
-    if (req.session.isAuth) {
-        req.session.destroy(() => {
-            res.redirect('/login')
+            title: userRole === 'admin' ? 'Add teacher' : 'Add student',
+            isTeacher: userRole === 'teacher',
+            isAdmin: userRole === 'admin',
+            isAuth: req.session.isAuth
         })
     }
 })
 
-router.get('/profile', authMiddleware, async (req,res)=> {
-    res.render('profile', {
-        title: "My profile",
-        isAdmin: (await User.findById(req.session.userId)).role === "admin",
-        isAuth: req.session.isAuth,
-        isTeacher: (await User.findById(req.session.userId)).role === "teacher",
-        name: (await User.findById(req.session.userId)).name,
-        email: (await User.findById(req.session.userId)).email,
-        password: (await User.findById(req.session.userId)).password
+router.get('/logout', authMiddleware, async (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/login')
     })
 })
 
-router.post('/change_password', authMiddleware, async (req,res)=> {
+router.get('/profile', authMiddleware, async (req,res)=> {
+    const user = await User.findById(req.session.userId)
+    res.render('profile', {
+        title: 'My profile',
+        isTeacher: user.role === 'teacher',
+        isAdmin: user.role === 'admin',
+        isAuth: req.session.isAuth,
+        name: user.name,
+        email: user.email,
+        password: user.password
+    })
+})
+
+router.post('/change_password', authMiddleware, changePasswordValidators, async (req,res)=> {
     try {
-        const old_user_password = (await User.findById(req.session.userId)).password
-        if (await bcrypt.compare(req.body.old_password, old_user_password)) {
-            const hashPassword = bcrypt.hash(req.body.new_password,10)
-            await User.findOneAndUpdate({_id: req.session.userId}, {password: (await hashPassword).toString()})
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            req.flash('error', errors.array()[0].msg)
+            return res.status(422).redirect('/profile')
+        }
+
+        const oldUserPassword = (await User.findById(req.session.userId)).password
+        if (await bcrypt.compare(req.body.oldPassword, oldUserPassword)) {
+            await User.findByIdAndUpdate(req.session.userId, {password: (await bcrypt.hash(req.body.newPassword, 10)).toString()})
             req.flash('success', 'Password has been changed...')
         } else {
             req.flash('error', 'Invalid old password')
@@ -91,68 +87,43 @@ router.post('/change_password', authMiddleware, async (req,res)=> {
     }
 })
 
-
-router.post('/login', async (req,res)=> {
+router.post('/login', loginValidators, async (req,res)=> {
     try {
-    const name = req.body.username
-    const candidate = await User.findOne({name})
-    if (candidate) {
-        if (await bcrypt.compare(req.body.password, candidate.password)) {
-            req.session.isAuth = true
-            req.session.userId = candidate._id
-            if (candidate.isAdmin) {
-                req.session.isAdmin = true
-            } else if (candidate.isTeacher){
-                req.session.isAuthenticatedTeacher = true
-            } else {
-                req.session.isAuthenticatedStudent = true
-            } 
-            res.redirect('/')
-         } else {
-            req.flash('error', 'Invalid password or username')
-            res.redirect('/login')
-         }
-    } else {
-        req.flash('error', 'Invalid password or username')
-        res.redirect('/login')
-    }
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            req.flash('error', errors.array()[0].msg)
+            return res.status(422).redirect('/login')
+        }
+        res.redirect('/')
     } catch (e) {
         console.log(e)
     }
 })
 
-router.post('/register', async (req,res)=> {
+router.post('/register', authMiddleware, registerValidators, async (req,res)=> {
     try {
-    const name = req.body.username
-    const password = req.body.password
-    const email = req.body.email
-    const user_role = (await User.findById(req.session.userId)).role
-    if (user_role === "admin") {
-    const hashPassword = bcrypt.hash(req.body.password, 10)
-    const user = new User({
-        name: name,
-        password: (await hashPassword).toString(),
-        email: email,
-        role: "teacher"
-    })
-    await user.save()
-    } else {
-        if (user_role === "teacher") {
-            const hashPassword = bcrypt.hash(req.body.password,10)
-            const user = new User({
-                name: name,
-                password: (await hashPassword).toString(),
-                email: email,
-                role: "student"
-            })
-            await user.save() 
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            req.flash('error', errors.array()[0].msg)
+            return res.status(422).redirect('/register')
         }
-    }
-    res.redirect('/')
+
+        const {username, password, email} = req.body
+        const userRole = (await User.findById(req.session.userId)).role
+        
+        if (userRole === 'admin' || userRole === 'teacher') {
+            const user = new User({
+                name: username,
+                password: (await bcrypt.hash(password, 10)).toString(),
+                email,
+                role: userRole === 'admin' ? 'teacher' : 'student'
+            })
+            await user.save()
+        }
+        res.redirect('/')
     } catch (e) {
         console.log(e)
     }
-
 })
 
 module.exports = router
