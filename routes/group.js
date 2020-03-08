@@ -17,11 +17,11 @@ router.get('/', authMiddleware, teacherMiddleware, async (req, res) => {
   })
 })
 
-router.get('/edit/:id', authMiddleware, teacherMiddleware, async (req, res) => {
+router.get('/:id', authMiddleware, teacherMiddleware, async (req, res) => {
   try {
     const students = (await User.find({role: "student"})).filter(c => !c.group)
     res.render('groups/edit', {
-      title: "Edit current group",
+      title: "Group",
       group: await Group.findById(req.params.id),
       isTeacher: (await User.findById(req.session.userId)).role === "teacher",
       isAdmin: (await User.findById(req.session.userId)).role === "admin",
@@ -53,7 +53,7 @@ router.post('/add_student', authMiddleware, teacherMiddleware, async (req,res)=>
         await User.findByIdAndUpdate(req.body.student, {group: req.body.id})
       }
     }
-    res.redirect('/groups/edit/' + req.body.id)
+    res.redirect('/groups/' + req.body.id)
   } catch (e) {
     console.log(e)
   }
@@ -84,7 +84,7 @@ router.post('/create', authMiddleware, teacherMiddleware, async (req, res) => {
     if (!(await Group.findOne({name: req.body.name}))) {
       const newGroup = new Group({name: req.body.name})
       await newGroup.save()
-      res.redirect('/groups/edit/'+newGroup._id)
+      res.redirect('/groups/'+newGroup._id)
     } else {
       req.flash('error', 'Group with this name is already exist...')
       res.redirect('/groups#createGroup')
@@ -103,7 +103,7 @@ router.post('/edit', authMiddleware, teacherMiddleware, async (req, res) => {
     } else {
       req.flash('error', 'Group with this name is already exist...')
     }
-    res.redirect('/groups/edit/'+id)
+    res.redirect('/groups/'+id)
   } catch(e) {
       console.log(e)
   }
