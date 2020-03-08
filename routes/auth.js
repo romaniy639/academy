@@ -21,6 +21,7 @@ router.get('/', authMiddleware , async (req,res)=> {
         title: "Academy",
         notifications
     })
+    await User.findByIdAndUpdate(req.session.userId, {$unset: {notification: ""}})
 })
 
 router.get('/login', async (req,res)=> {
