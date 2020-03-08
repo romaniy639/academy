@@ -1,12 +1,13 @@
 const {Router} = require('express')
 const Group = require('../models/group')
 const authMiddleware = require('../middleware/auth')
+const teacherMiddleware = require('../middleware/teacher')
 const flash = require('connect-flash')
 const User = require('../models/user')
 
 const router = new Router()
 
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, teacherMiddleware, async (req, res) => {
   res.render('groups/show-reg-notify', {
     title: "Groups management",
     groups: await Group.find(),
@@ -16,7 +17,7 @@ router.get('/', authMiddleware, async (req, res) => {
   })
 })
 
-router.get('/edit/:id', authMiddleware, async (req, res) => {
+router.get('/edit/:id', authMiddleware, teacherMiddleware, async (req, res) => {
   try {
     const students = (await User.find({role: "student"})).filter(c => !c.group)
     res.render('groups/edit', {
@@ -33,7 +34,7 @@ router.get('/edit/:id', authMiddleware, async (req, res) => {
   }
 })
 
-router.get('/add_notification', authMiddleware, async (req,res)=> {
+router.get('/add_notification', authMiddleware, teacherMiddleware, async (req,res)=> {
   res.render('groups/notification', {
       title: "Notification",
       isAuth: req.session.isAuth,
@@ -43,7 +44,7 @@ router.get('/add_notification', authMiddleware, async (req,res)=> {
   })
 })
 
-router.post('/add_student', authMiddleware, async (req,res)=> {
+router.post('/add_student', authMiddleware, teacherMiddleware, async (req,res)=> {
   try {
     if (req.body.student) {
       const candidate = await User.findById(req.body.student)
@@ -58,7 +59,7 @@ router.post('/add_student', authMiddleware, async (req,res)=> {
   }
 })
 
-router.post('/notification', authMiddleware, async (req,res)=> {
+router.post('/notification', authMiddleware, teacherMiddleware, async (req,res)=> {
   try {
       if (req.body.group) {
           await Group.findByIdAndUpdate(req.body.group, {$push: {notification: req.body.message}})
@@ -69,7 +70,7 @@ router.post('/notification', authMiddleware, async (req,res)=> {
   }
 })
 
-router.post('/create', authMiddleware, async (req, res) => {
+router.post('/create', authMiddleware, teacherMiddleware, async (req, res) => {
   try {
     if (!(await Group.findOne({name: req.body.name}))) {
       const newGroup = new Group({name: req.body.name})
@@ -84,7 +85,7 @@ router.post('/create', authMiddleware, async (req, res) => {
   }
 })
 
-router.post('/edit', authMiddleware, async (req, res) => {
+router.post('/edit', authMiddleware, teacherMiddleware, async (req, res) => {
   try {
     const {id} = req.body
     if (!(await Group.findOne({name: req.body.name}))) {
@@ -99,8 +100,13 @@ router.post('/edit', authMiddleware, async (req, res) => {
   }
 })
 
-router.post('/delete', authMiddleware, async (req, res) => {
+router.post('/delete', authMiddleware, teacherMiddleware, async (req, res) => {
   try {
+
+
+
+
+    
     await Group.deleteOne({_id: req.body.id})
     res.redirect('groups')
   } catch (e) {

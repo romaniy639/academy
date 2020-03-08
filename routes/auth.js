@@ -23,6 +23,8 @@ router.get('/login', async (req,res)=> {
             title: "Login",
             isAuth: req.session.isAuth
         })
+    } else {
+        res.redirect('/')
     }
 })
 
