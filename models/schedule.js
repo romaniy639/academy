@@ -4,29 +4,29 @@ module.exports = model('Schedule', new Schema({
   group: {type: Schema.Types.ObjectId, ref: 'Group', required: true},
   week: {
     monday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: String, required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }],
     tuesday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: String, required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }],
     wednesday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: String, required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }],
     thursday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: String, required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }],
     friday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: String, required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }]
   },
   scheduleAuthor: {type: Schema.Types.ObjectId, ref: 'User', required: true},
