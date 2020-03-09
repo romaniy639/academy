@@ -9,7 +9,7 @@
             <label for="name">New group name</label>
             <span class="helper-text" data-error="Enter valid group name"></span>
             <input type="hidden" name="id" value="{{group._id}}">
-            <button class="btn btn-primary" type="submit">RENAME GROUP</button>
+            <button class="btn btn-primary" type="submit">RENAME</button>
           </div>
         </form>
 
@@ -24,7 +24,7 @@
           <div style="display: flex;">
             <h6 style="margin: auto 0">Add to group: {{group.name}}</h6>
             <div class="input-field col s6">
-              <select style="display: block;" name="student">
+              <select style="display: block;" name="studentId">
                 <option value="" disabled selected>Choose student</option>
                 {{#if students.length}}
                   {{#each students}}
@@ -33,7 +33,7 @@
                 {{/if}}
               </select>
             </div>
-            <input type="hidden" name="id" value="{{group._id}}">
+            <input type="hidden" name="groupId" value="{{group._id}}">
           </div>
           <div class="col-12" style="text-align: center;">
             <button class="btn waves-effect" style="width: 50%; margin-top: 1rem" type="submit">Add</button>
