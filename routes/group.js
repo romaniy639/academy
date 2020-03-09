@@ -21,13 +21,14 @@ router.get('/', authMiddleware, async (req, res) => {
 
 router.get('/:id', authMiddleware, async (req, res) => {
   try {
+    const {role} = await User.findById(req.session.userId)
     const group = await Group.findById(req.params.id)
     if (!group) return res.redirect('/groups')
     res.render('groups/edit', {
       title: "Group",
       group,
-      isTeacher: (await User.findById(req.session.userId)).role === "teacher",
-      isAdmin: (await User.findById(req.session.userId)).role === "admin",
+      isTeacher: role === "teacher",
+      isAdmin: role === "admin",
       isAuth: req.session.isAuth,
       students: (await User.find({role: "student"})).filter(c => !c.group),
       group_students: (await Group.findById(req.params.id).populate('students', 'name').select('name')).students
@@ -38,11 +39,12 @@ router.get('/:id', authMiddleware, async (req, res) => {
 })
 
 router.get('/add_notification', authMiddleware, teacherMiddleware, async (req,res)=> {
+  const {role} = await User.findById(req.session.userId)
   res.render('groups/notification', {
       title: "Notification",
       isAuth: req.session.isAuth,
-      isTeacher: (await User.findById(req.session.userId)).role === "teacher",
-      isAdmin: (await User.findById(req.session.userId)).role === "admin",
+      isTeacher: role === "teacher",
+      isAdmin: role === "admin",
       groups: await Group.find(),
   })
 })
@@ -65,14 +67,13 @@ router.post('/add_student', authMiddleware, teacherMiddleware, async (req,res)=>
 router.post('/notification', authMiddleware, teacherMiddleware, async (req,res)=> {
   try {
       if (req.body.group) {
-          //await Group.findByIdAndUpdate(req.body.group, {$push: {notification: req.body.message}})
           const students = await Group.findById(req.body.group)
-          for (let student of students.students) {
-            const teacherName = (await User.findById(req.session.userId)).name
-            const message = {
+          const teacherName = (await User.findById(req.session.userId)).name
+          const message = {
               author: teacherName,
               message: req.body.message
-            }
+          }
+          for (let student of students.students) {
             await User.findByIdAndUpdate(student, {$push: {notification: message}})
           }
       }

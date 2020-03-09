@@ -41,7 +41,6 @@ app.use('/groups', groupRouter)
 
 
 
-
 async function start() {
     try {
         await mongoose.connect(keys.MONGODB_URI, {

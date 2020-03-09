@@ -20,7 +20,7 @@
                     </a>
 
                     {{#if @root.isTeacher}}
-                    <form action="/schedules/delete" method="post">
+                    <form action="/schedule/delete" method="post">
                         <input type="hidden" name="id" value="{{_id}}">
                         <button type="submit" class="btn waves-effect waves-light" style="height: 100%;">
                             <i class="material-icons">delete_forever</i>
@@ -37,16 +37,171 @@
 
         {{#if isTeacher}}
         <div id="createSchedule" class="col s6 offset-s3">
-            <form action="/schedules/create" method="POST">
-                
-                
-                
-                
+            <form action="/schedule/create" method="POST">
+                            <table>
+                    <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Subject</th>
+                        <th>Classroom</th>
+                        <th>Teacher</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Monday</td>
+                        <td>
+                            <div>
+                             <input type="text" name="monday_first" class="validate">
+                             <input type="text" name="monday_second" class="validate">
+                             <input type="text" name="monday_third" class="validate">
+                             <input type="text" name="monday_fourth" class="validate">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                             <input type="text" name="monday_first_class" class="validate">
+                             <input type="text" name="monday_second_class" class="validate">
+                             <input type="text" name="monday_third_class" class="validate">
+                             <input type="text" name="monday_fourth_class" class="validate">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                             <input type="text" name="monday_first_teacher" class="validate">
+                             <input type="text" name="monday_second_teacher" class="validate">
+                             <input type="text" name="monday_third_teacher" class="validate">
+                             <input type="text" name="monday_fourth_teacher" class="validate">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tuesday</td>
+                        <td>
+                            <div>
+                             <input type="text" name="tuesday_first" class="validate">
+                             <input type="text" name="tuesday_second" class="validate">
+                             <input type="text" name="tuesday_third" class="validate">
+                             <input type="text" name="tuesday_fourth" class="validate">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                             <input type="text" name="tuesday_first_class" class="validate">
+                             <input type="text" name="tuesday_second_class" class="validate">
+                             <input type="text" name="tuesday_third_class" class="validate">
+                             <input type="text" name="tuesday_fourth_class" class="validate">
+                            </div>
+                        </td>
+                         <td>
+                            <div>
+                             <input type="text" name="tuesday_first_teacher" class="validate">
+                             <input type="text" name="tuesday_second_teacher" class="validate">
+                             <input type="text" name="tuesday_third_teacher" class="validate">
+                             <input type="text" name="tuesday_fourth_teacher" class="validate">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Wednesday</td>
+                        <td>
+                            <div>
+                             <input type="text" name="wednesday_first" class="validate">
+                             <input type="text" name="wednesday_second" class="validate">
+                             <input type="text" name="wednesday_third" class="validate">
+                             <input type="text" name="wednesday_fourth" class="validate">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                             <input type="text" name="wednesday_first_class" class="validate">
+                             <input type="text" name="wednesday_second_class" class="validate">
+                             <input type="text" name="wednesday_third_class" class="validate">
+                             <input type="text" name="wednesday_fourth_class" class="validate">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                             <input type="text" name="wednesday_first_teacher" class="validate">
+                             <input type="text" name="wednesday_second_teacher" class="validate">
+                             <input type="text" name="wednesday_third_teacher" class="validate">
+                             <input type="text" name="wednesday_fourth_teacher" class="validate">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Thursday</td>
+                        <td>
+                            <div>
+                             <input type="text" name="thursday_first" class="validate">
+                             <input type="text" name="thursday_second" class="validate">
+                             <input type="text" name="thursday_third" class="validate">
+                             <input type="text" name="thursday_fourth" class="validate">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                             <input type="text" name="thursday_first_class" class="validate">
+                             <input type="text" name="thursday_second_class" class="validate">
+                             <input type="text" name="thursday_third_class" class="validate">
+                             <input type="text" name="thursday_fourth_class" class="validate">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                             <input type="text" name="thursday_first_teacher" class="validate">
+                             <input type="text" name="thursday_second_teacher" class="validate">
+                             <input type="text" name="thursday_third_teacher" class="validate">
+                             <input type="text" name="thursday_fourth_teacher" class="validate">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Friday</td>
+                        <td>
+                            <div>
+                             <input type="text" name="friday_first" class="validate">
+                             <input type="text" name="friday_second" class="validate">
+                             <input type="text" name="friday_third" class="validate">
+                             <input type="text" name="friday_fourth" class="validate">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                             <input type="text" name="friday_first_class" class="validate">
+                             <input type="text" name="friday_second_class" class="validate">
+                             <input type="text" name="friday_third_class" class="validate">
+                             <input type="text" name="friday_fourth_class" class="validate">
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                             <input type="text" name="friday_first_teacher" class="validate">
+                             <input type="text" name="friday_second_teacher" class="validate">
+                             <input type="text" name="friday_third_teacher" class="validate">
+                             <input type="text" name="friday_fourth_teacher" class="validate">
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
                 
                 {{#if error_messages }}
                 <div class="red-text text-darken-2">{{error_messages}}</div>
                 {{/if}}
-                <button type="submit" class="btn btn-primary">REGISTER NEW SCHEDULE</button>
+                <div style="width: 100%; display: flex;">
+                    <button type="submit" class="btn btn-primary">REGISTER NEW SCHEDULE</button>
+                    <div class="input-field col s6">
+                        <select name="group" style="display: block;">
+                            <option value="" disabled selected>Choose group</option>
+                            {{#if groups.length}}
+                            {{#each groups}}
+                            <option value="{{_id}}">{{name}}</option>
+                            {{/each}}
+                            {{/if}}
+                        </select>
+                    </div>
+                </div>
             </form>
         </div>
         {{/if}}
