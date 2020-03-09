@@ -16,7 +16,7 @@ router.get('/create', (req, res) => {
   })
 })
 
-router.get('/edit/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     res.render('schedule/edit', {
       title: "Edit current schedule",
@@ -32,10 +32,7 @@ router.post('/create', async (req, res) => {
     const newSchedule = new Schedule({
       group: await Group.find({name: req.body.groupName}),
       week: req.body.week,
-      scheduleAuthor: {
-        name: req.session.user.name,
-        userId: req.session.user._id
-      }
+      scheduleAuthor: req.session.userId
     })
 
     await newSchedule.save()
@@ -60,7 +57,7 @@ router.post('/edit', async (req, res) => {
 
 router.post('/delete', async (req, res) => {
   try {
-    await Schedule.deleteOne({_id: req.body.id})
+    await Schedule.findByIdAndDelete(req.body.id)
     res.redirect('/schedule')
   } catch (e) {
     console.log(e)

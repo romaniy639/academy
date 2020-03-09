@@ -1,0 +1,58 @@
+<div class="schedule">
+    <div class="row">
+        {{#if isTeacher}}
+        <div class="col s12">
+            <ul class="tabs">
+                <li class="tab col s6"><a class="active" href="#showSchedules">Show schedules</a></li>
+                <li class="tab col s6"><a href="#createSchedule">Add new schedule</a></li>
+            </ul>
+        </div>
+        {{/if}}
+
+        <div id="showSchedules" class="col s6 offset-s3">
+            {{#if schedules.length}}
+            <div class="collection">
+                {{#each schedules}}
+                <div style="display: flex; justify-content: space-between;">
+                    
+                    <a href="/schedules/{{_id}}" class="collection-item" style="width: 100%;">
+                        {{group}}
+                    </a>
+
+                    {{#if @root.isTeacher}}
+                    <form action="/schedules/delete" method="post">
+                        <input type="hidden" name="id" value="{{_id}}">
+                        <button type="submit" class="btn waves-effect waves-light" style="height: 100%;">
+                            <i class="material-icons">delete_forever</i>
+                        </button>
+                    </form>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{else}}
+            <p>No schedules available!</p>
+            {{/if}}
+        </div>
+
+        {{#if isTeacher}}
+        <div id="createSchedule" class="col s6 offset-s3">
+            <form action="/schedules/create" method="POST">
+                
+                
+                
+                
+                
+                {{#if error_messages }}
+                <div class="red-text text-darken-2">{{error_messages}}</div>
+                {{/if}}
+                <button type="submit" class="btn btn-primary">REGISTER NEW SCHEDULE</button>
+            </form>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+<script>
+    M.Tabs.init(document.querySelectorAll('.tabs'))
+</script>
