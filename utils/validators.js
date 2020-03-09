@@ -1,6 +1,6 @@
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
-const {body} = require('express-validator/check')
+const {body} = require('express-validator')
 
 exports.loginValidators = [
     body('password', 'Invalid username or password')
