@@ -32,108 +32,108 @@ router.post('/create', async (req, res) => {
   try {
     const week = {
         monday: [{
-          courseName: req.body.monday_first,
-          courseTeacher: req.body.monday_first_teacher,
-          classroom: req.body.monday_first_class
+          courseName: req.body.monday_first || " ",
+          courseTeacher: req.body.monday_first_teacher || " ",
+          classroom: req.body.monday_first_class || " "
         },
         {
-          courseName: req.body.monday_second,
-          courseTeacher: req.body.monday_second_teacher,
-          classroom: req.body.monday_second_class
+          courseName: req.body.monday_second || " ",
+          courseTeacher: req.body.monday_second_teacher || " ",
+          classroom: req.body.monday_second_class || " "
         },
         {
-          courseName: req.body.monday_third,
-          courseTeacher: req.body.monday_third_teacher,
-          classroom: req.body.monday_third_class
+          courseName: req.body.monday_third || " ",
+          courseTeacher: req.body.monday_third_teacher || " ",
+          classroom: req.body.monday_third_class || " "
         },
         {
-          courseName: req.body.monday_fourth,
-          courseTeacher: req.body.monday_fourth_teacher,
-          classroom: req.body.monday_fourth_class
+          courseName: req.body.monday_fourth || " ",
+          courseTeacher: req.body.monday_fourth_teacher || " ",
+          classroom: req.body.monday_fourth_class || " "
         }
       ],
       tuesday: [{
-        courseName: req.body.tuesday_first,
-        courseTeacher: req.body.tuesday_first_teacher,
-        classroom: req.body.tuesday_first_class
+        courseName: req.body.tuesday_first || " ",
+        courseTeacher: req.body.tuesday_first_teacher || " ",
+        classroom: req.body.tuesday_first_class || " "
       },
       {
-        courseName: req.body.tuesday_second,
-        courseTeacher: req.body.tuesday_second_teacher,
-        classroom: req.body.tuesday_second_class
+        courseName: req.body.tuesday_second || " ",
+        courseTeacher: req.body.tuesday_second_teacher || " ",
+        classroom: req.body.tuesday_second_class || " "
       },
       {
-        courseName: req.body.tuesday_third,
-        courseTeacher: req.body.tuesday_third_teacher,
-        classroom: req.body.tuesday_third_class
+        courseName: req.body.tuesday_third || " ",
+        courseTeacher: req.body.tuesday_third_teacher || " ",
+        classroom: req.body.tuesday_third_class || " "
       },
       {
-        courseName: req.body.tuesday_fourth,
-        courseTeacher: req.body.tuesday_fourth_teacher,
-        classroom: req.body.tuesday_fourth_class
+        courseName: req.body.tuesday_fourth || " ",
+        courseTeacher: req.body.tuesday_fourth_teacher || " ",
+        classroom: req.body.tuesday_fourth_class || " "
       }
     ],
     wednesday: [{
-      courseName: req.body.wednesday_first,
-      courseTeacher: req.body.wednesday_first_teacher,
-      classroom: req.body.wednesday_first_class
+      courseName: req.body.wednesday_first || " ",
+      courseTeacher: req.body.wednesday_first_teacher || " ",
+      classroom: req.body.wednesday_first_class || " "
     },
     {
-      courseName: req.body.wednesday_second,
-      courseTeacher: req.body.wednesday_second_teacher,
-      classroom: req.body.wednesday_second_class
+      courseName: req.body.wednesday_second || " ",
+      courseTeacher: req.body.wednesday_second_teacher || " ",
+      classroom: req.body.wednesday_second_class || " "
     },
     {
-      courseName: req.body.wednesday_third,
-      courseTeacher: req.body.wednesday_third_teacher,
-      classroom: req.body.wednesday_third_class
+      courseName: req.body.wednesday_third || " ",
+      courseTeacher: req.body.wednesday_third_teacher || " ",
+      classroom: req.body.wednesday_third_class || " "
     },
     {
-      courseName: req.body.wednesday_fourth,
-      courseTeacher: req.body.wednesday_fourth_teacher,
-      classroom: req.body.wednesday_fourth_class
+      courseName: req.body.wednesday_fourth || " ",
+      courseTeacher: req.body.wednesday_fourth_teacher || " ",
+      classroom: req.body.wednesday_fourth_class || " "
     }
   ],
   thursday: [{
-    courseName: req.body.thursday_first,
-    courseTeacher: req.body.thursday_first_teacher,
-    classroom: req.body.thursday_first_class
+    courseName: req.body.thursday_first || " ",
+    courseTeacher: req.body.thursday_first_teacher || " ",
+    classroom: req.body.thursday_first_class || " "
   },
   {
-    courseName: req.body.thursday_second,
-    courseTeacher: req.body.thursday_second_teacher,
-    classroom: req.body.thursday_second_class
+    courseName: req.body.thursday_second || " ",
+    courseTeacher: req.body.thursday_second_teacher || " ",
+    classroom: req.body.thursday_second_class || " "
   },
   {
-    courseName: req.body.thursday_third,
-    courseTeacher: req.body.thursday_third_teacher,
-    classroom: req.body.thursday_third_class
+    courseName: req.body.thursday_third || " ",
+    courseTeacher: req.body.thursday_third_teacher || " ",
+    classroom: req.body.thursday_third_class || " "
   },
   {
-    courseName: req.body.thursday_fourth,
-    courseTeacher: req.body.thursday_fourth_teacher,
-    classroom: req.body.thursday_fourth_class
+    courseName: req.body.thursday_fourth || " ",
+    courseTeacher: req.body.thursday_fourth_teacher || " ",
+    classroom: req.body.thursday_fourth_class || " "
   }
   ],
   friday: [{
-    courseName: req.body.friday_first,
-    courseTeacher: req.body.friday_first_teacher,
-    classroom: req.body.friday_first_class
+    courseName: req.body.friday_first || " ",
+    courseTeacher: req.body.friday_first_teacher || " ",
+    classroom: req.body.friday_first_class || " "
   },
   {
-    courseName: req.body.friday_second,
-    courseTeacher: req.body.friday_second_teacher,
-    classroom: req.body.friday_second_class
+    courseName: req.body.friday_second || " ",
+    courseTeacher: req.body.friday_second_teacher || " ",
+    classroom: req.body.friday_second_class || " "
   },
   {
-    courseName: req.body.friday_third,
-    courseTeacher: req.body.friday_third_teacher,
-    classroom: req.body.friday_third_class
+    courseName: req.body.friday_third || " ",
+    courseTeacher: req.body.friday_third_teacher || " ",
+    classroom: req.body.friday_third_class || " "
   },
   {
-    courseName: req.body.friday_fourth,
-    courseTeacher: req.body.friday_fourth_teacher,
-    classroom: req.body.friday_fourth_class
+    courseName: req.body.friday_fourth || " ",
+    courseTeacher: req.body.friday_fourth_teacher || " ",
+    classroom: req.body.friday_fourth_class || " "
   }
 ],
     }
