@@ -1,0 +1,23 @@
+<div id="div" style="width: 15%;"></div>
+<input type="button" id="button" value="Создать">
+<script>
+    var count = 1
+    button.addEventListener("click", function () {
+        var input = document.createElement('INPUT')
+        input.type = 'text'
+        input.setAttribute("data-id", "subject" + count)
+        input.name = "value[]"
+        document.querySelector('#div').appendChild(input)
+        var input2 = document.createElement('INPUT')
+        input2.type = 'text'
+        input2.setAttribute("data-id", "teacher" + count)
+        input2.name = "value[]"
+        document.querySelector('#div').appendChild(input2)
+        var input3 = document.createElement('INPUT')
+        input3.type = 'text'
+        input3.setAttribute("data-id", "classroom" + count)
+        input3.name = "value[]"
+        document.querySelector('#div').appendChild(input3)
+        count++
+    })
+</script>

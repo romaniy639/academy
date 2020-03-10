@@ -28,6 +28,10 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+router.get('/test/s', (req,res) => {
+  res.render('schedule/test')
+})
+
 router.post('/create', async (req, res) => {
   try {
     const week = {
