@@ -4,41 +4,36 @@ module.exports = model('Schedule', new Schema({
   group: {type: Schema.Types.ObjectId, ref: 'Group', required: true},
   week: {
     monday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }],
     tuesday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }],
     wednesday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }],
     thursday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }],
     friday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-      classroom: {type: String, require: true}
-    }],
-    saturday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-      classroom: {type: String, require: true}
-    }],
-    sunday: [{
-      courseName: {type: String, required: true},
-      courseTeacher: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-      classroom: {type: String, require: true}
+      courseName: {type: String},
+      courseTeacher: {type: String},
+      classroom: {type: String}
     }]
   },
   scheduleAuthor: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-  date: {type: Date, default: Date.now}
+  date: {type: Date, default: Date.now},
+  comments: [{
+    date: {type: Date, default: Date.now},
+    author: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+    message: {type: String, required: true}
+  }]
 }))

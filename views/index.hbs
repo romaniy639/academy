@@ -4,7 +4,6 @@
         {{#each notifications}}
             <script>
                 Notification.requestPermission(function(permission){
-                // переменная permission содержит результат запроса
                 console.log('Результат запроса прав:', permission);
                 });
                 var notification = new Notification(`{{author}}`, {
