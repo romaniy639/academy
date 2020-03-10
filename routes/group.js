@@ -92,7 +92,6 @@ router.post('/create', authMiddleware, teacherMiddleware, groupNameValidator, as
 router.post('/edit', authMiddleware, teacherMiddleware, groupEditValidator, async (req, res) => {
   try {
     const {id} = req.body
-    console.log(id)
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       req.flash('error', errors.array()[0].msg)

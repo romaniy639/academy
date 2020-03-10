@@ -21,7 +21,7 @@
     {{/if}}
 
     <form action="/groups/add_student" method="POST">
-            <input type="hidden" name="groupId" value="{{group._id}}">
+      <input type="hidden" name="groupId" value="{{group._id}}">
       <div style="display: flex;">
         <h6 style="margin: auto 0">Add to group: {{group.name}}</h6>
         <div class="input-field col s6">
@@ -56,18 +56,24 @@
         {{#if group_students.length}}
         {{#each group_students}}
         <li class="collection-item" style="display: flex;">
-            <p>
-              <label>
-                <input type="checkbox" name="userId[]" value="{{_id}}">
-                <span></span>
-              </label>
-            </p>
-            <p>{{name}}</p>
+          {{#if @root.isTeacher}}
+          <p>
+            <label>
+              <input type="checkbox" name="userId[]" value="{{_id}}">
+              <span></span>
+            </label>
+          </p>
+          {{/if}}
+          <p>{{name}}</p>
         </li>
         {{/each}}
         {{/if}}
       </ul>
+      {{#if group_students.length}}
+      {{#if isTeacher}}
       <button type="submit" class="btn waves-effect" style="margin-top: 1rem;"> Delete students </button>
+      {{/if}}
+      {{/if}}
 </form>
 </div>
 </div>
