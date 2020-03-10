@@ -6,17 +6,17 @@
         var input = document.createElement('INPUT')
         input.type = 'text'
         input.setAttribute("data-id", "subject" + count)
-        input.name = "value[]"
+        input.name = "course[]"
         document.querySelector('#div').appendChild(input)
         var input2 = document.createElement('INPUT')
         input2.type = 'text'
         input2.setAttribute("data-id", "teacher" + count)
-        input2.name = "value[]"
+        input2.name = "teacher[]"
         document.querySelector('#div').appendChild(input2)
         var input3 = document.createElement('INPUT')
         input3.type = 'text'
         input3.setAttribute("data-id", "classroom" + count)
-        input3.name = "value[]"
+        input3.name = "classroom[]"
         document.querySelector('#div').appendChild(input3)
         count++
     })

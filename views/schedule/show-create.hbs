@@ -47,11 +47,147 @@
                     </thead>
                     <tbody>
                         <tr>
-                            
+                            <td>Monday</td>
+                            <th>
+                                <div id="div"></div>
+                                <input type="button" id="button" value="Создать">
+                                <script>
+                                    var count = 1
+                                    button.addEventListener("click", function () {
+                                        var input = document.createElement('INPUT')
+                                        input.type = 'text'
+                                        input.setAttribute("data-id", "subject" + count)
+                                        input.name = "monday_course[]"
+                                        document.querySelector('#div').appendChild(input)
+                                        var input2 = document.createElement('INPUT')
+                                        input2.type = 'text'
+                                        input2.setAttribute("data-id", "teacher" + count)
+                                        input2.name = "monday_teacher[]"
+                                        document.querySelector('#div').appendChild(input2)
+                                        var input3 = document.createElement('INPUT')
+                                        input3.type = 'text'
+                                        input3.setAttribute("data-id", "classroom" + count)
+                                        input3.name = "monday_classroom[]"
+                                        document.querySelector('#div').appendChild(input3)
+                                        count++
+                                    })
+                                </script>
+                            </th>
+                        </tr>
+                        </tr>
+                        <td>Tuesday</td>
+                        <th>
+                            <div id="div2"></div>
+                            <input type="button" id="button2" value="Создать">
+                            <script>
+                                var count = 1
+                                button2.addEventListener("click", function () {
+                                    var input = document.createElement('INPUT')
+                                    input.type = 'text'
+                                    input.setAttribute("data-id", "subject" + count)
+                                    input.name = "tuesday_course[]"
+                                    document.querySelector('#div2').appendChild(input)
+                                    var input2 = document.createElement('INPUT')
+                                    input2.type = 'text'
+                                    input2.setAttribute("data-id", "teacher" + count)
+                                    input2.name = "tuesday_teacher[]"
+                                    document.querySelector('#div2').appendChild(input2)
+                                    var input3 = document.createElement('INPUT')
+                                    input3.type = 'text'
+                                    input3.setAttribute("data-id", "classroom" + count)
+                                    input3.name = "tuesday_classroom[]"
+                                    document.querySelector('#div2').appendChild(input3)
+                                    count++
+                                })
+                            </script>
+                        </th>
+                        </tr>
+                        </tr>
+                        <td>Wednesday</td>
+                        <th>
+                            <div id="div3"></div>
+                            <input type="button" id="button3" value="Создать">
+                            <script>
+                                var count = 1
+                                button3.addEventListener("click", function () {
+                                    var input = document.createElement('INPUT')
+                                    input.type = 'text'
+                                    input.setAttribute("data-id", "subject" + count)
+                                    input.name = "wednesday_course[]"
+                                    document.querySelector('#div3').appendChild(input)
+                                    var input2 = document.createElement('INPUT')
+                                    input2.type = 'text'
+                                    input2.setAttribute("data-id", "teacher" + count)
+                                    input2.name = "wednesday_teacher[]"
+                                    document.querySelector('#div3').appendChild(input2)
+                                    var input3 = document.createElement('INPUT')
+                                    input3.type = 'text'
+                                    input3.setAttribute("data-id", "classroom" + count)
+                                    input3.name = "wednesday_classroom[]"
+                                    document.querySelector('#div3').appendChild(input3)
+                                    count++
+                                })
+                            </script>
+                        </th>
+                        </tr>
+                        </tr>
+                        <td>Thursday</td>
+                        <th>
+                            <div id="div4"></div>
+                            <input type="button" id="button4" value="Создать">
+                            <script>
+                                var count = 1
+                                button4.addEventListener("click", function () {
+                                    var input = document.createElement('INPUT')
+                                    input.type = 'text'
+                                    input.setAttribute("data-id", "subject" + count)
+                                    input.name = "thursday_course[]"
+                                    document.querySelector('#div4').appendChild(input)
+                                    var input2 = document.createElement('INPUT')
+                                    input2.type = 'text'
+                                    input2.setAttribute("data-id", "teacher" + count)
+                                    input2.name = "thursday_teacher[]"
+                                    document.querySelector('#div4').appendChild(input2)
+                                    var input3 = document.createElement('INPUT')
+                                    input3.type = 'text'
+                                    input3.setAttribute("data-id", "classroom" + count)
+                                    input3.name = "thursday_classroom[]"
+                                    document.querySelector('#div4').appendChild(input3)
+                                    count++
+                                })
+                            </script>
+                        </th>
+                        </tr>
+                        </tr>
+                        <td>Friday</td>
+                        <th>
+                            <div id="div5"></div>
+                            <input type="button" id="button5" value="Создать">
+                            <script>
+                                var count = 1
+                                button5.addEventListener("click", function () {
+                                    var input = document.createElement('INPUT')
+                                    input.type = 'text'
+                                    input.setAttribute("data-id", "subject" + count)
+                                    input.name = "friday_course[]"
+                                    document.querySelector('#div5').appendChild(input)
+                                    var input2 = document.createElement('INPUT')
+                                    input2.type = 'text'
+                                    input2.setAttribute("data-id", "teacher" + count)
+                                    input2.name = "friday_teacher[]"
+                                    document.querySelector('#div5').appendChild(input2)
+                                    var input3 = document.createElement('INPUT')
+                                    input3.type = 'text'
+                                    input3.setAttribute("data-id", "classroom" + count)
+                                    input3.name = "friday_classroom[]"
+                                    document.querySelector('#div5').appendChild(input3)
+                                    count++
+                                })
+                            </script>
+                        </th>
                         </tr>
                     </tbody>
                 </table>
-
                 {{#if error_messages }}
                 <div class="red-text text-darken-2">{{error_messages}}</div>
                 {{/if}}
