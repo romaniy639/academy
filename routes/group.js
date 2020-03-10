@@ -4,6 +4,7 @@ const Group = require('../models/group')
 const authMiddleware = require('../middleware/auth')
 const teacherMiddleware = require('../middleware/teacher')
 const flash = require('connect-flash')
+const ObjectId = require('mongodb').ObjectID
 const User = require('../models/user')
 const {groupIdValidator, addStudentValidator, notificationValidator, groupNameValidator, groupEditValidator, groupDeleteValidator} = require('../utils/validators')
 
@@ -91,6 +92,7 @@ router.post('/create', authMiddleware, teacherMiddleware, groupNameValidator, as
 router.post('/edit', authMiddleware, teacherMiddleware, groupEditValidator, async (req, res) => {
   try {
     const {id} = req.body
+    console.log(id)
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       req.flash('error', errors.array()[0].msg)
@@ -102,6 +104,24 @@ router.post('/edit', authMiddleware, teacherMiddleware, groupEditValidator, asyn
     res.redirect('/groups/'+id)
   } catch(e) {
       console.log(e)
+  }
+})
+
+router.post('/delete_students', authMiddleware, teacherMiddleware, async (req,res) => {
+  try {
+    let students_id = (await Group.findById(req.body.groupId)).students
+    let delete_students = []
+    for (let i=students_id.length-1;i>=0;i--) {
+      if (req.body.userId[i]) {
+        delete_students.push(students_id[i])
+      }
+    }
+    students_id = students_id.filter(st => !(delete_students.includes(st)))
+    await Group.findByIdAndUpdate(req.body.groupId, {students: students_id})
+    await User.updateMany({_id: delete_students}, {$unset: {group: ""}})
+    res.redirect('/groups/' + req.body.groupId)
+  } catch (e) {
+    console.log(e)
   }
 })
 

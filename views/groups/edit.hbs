@@ -2,61 +2,72 @@
   <div class="col s6 offset-s3">
     {{#if group}}
     <p style="font-size: 2rem;"> Group name: <span style="font-weight: bold;">{{group.name}}</span></p>
-      {{#if isTeacher}}
-        <form action="/groups/edit" method="POST">
-          <div class="input-field" style="display: flex;">
-            <input id="name" name="name" type="text" class="validate" value="{{group.name}}" required>
-            <label for="name">New group name</label>
-            <span class="helper-text" data-error="Enter valid group name"></span>
-            <input type="hidden" name="id" value="{{group._id}}">
-            <button class="btn btn-primary" type="submit">RENAME</button>
-          </div>
-        </form>
+    {{#if isTeacher}}
+    <form action="/groups/edit" method="POST">
+      <div class="input-field" style="display: flex;">
+        <input id="name" name="name" type="text" class="validate" value="{{group.name}}" required>
+        <label for="name">New group name</label>
+        <span class="helper-text" data-error="Enter valid group name"></span>
+        <input type="hidden" name="id" value="{{group._id}}">
+        <button class="btn btn-primary" type="submit">RENAME</button>
+      </div>
+    </form>
 
-        {{#if success_messages }}
-          <div class="green-text text-darken-2">{{success_messages}}</div>
-        {{/if}}
-        {{#if error_messages }}
-          <div class="red-text text-darken-2">{{error_messages}}</div>
-        {{/if}}
-        
-        <form action="/groups/add_student" method="POST">
-          <div style="display: flex;">
-            <h6 style="margin: auto 0">Add to group: {{group.name}}</h6>
-            <div class="input-field col s6">
-              <select style="display: block;" name="studentId">
-                <option value="" disabled selected>Choose student</option>
-                {{#if students.length}}
-                  {{#each students}}
-                    <option value="{{_id}}">{{name}}</option>
-                  {{/each}}
-                {{/if}}
-              </select>
-            </div>
+    {{#if success_messages }}
+    <div class="green-text text-darken-2">{{success_messages}}</div>
+    {{/if}}
+    {{#if error_messages }}
+    <div class="red-text text-darken-2">{{error_messages}}</div>
+    {{/if}}
+
+    <form action="/groups/add_student" method="POST">
             <input type="hidden" name="groupId" value="{{group._id}}">
-          </div>
-          <div class="col-12" style="text-align: center;">
-            <button class="btn waves-effect" style="width: 50%; margin-top: 1rem" type="submit">Add</button>
-          </div>
-        </form>
-      {{/if}}
+      <div style="display: flex;">
+        <h6 style="margin: auto 0">Add to group: {{group.name}}</h6>
+        <div class="input-field col s6">
+          <select style="display: block;" name="studentId">
+            <option value="" disabled selected>Choose student</option>
+            {{#if students.length}}
+            {{#each students}}
+            <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+            {{/if}}
+          </select>
+        </div>
+      </div>
+      <div class="col-12" style="text-align: center;">
+        <button class="btn waves-effect" style="width: 50%; margin-top: 1rem" type="submit">Add</button>
+      </div>
+    </form>
+    {{/if}}
     {{else}}
     <p>Group does not exist!</p>
     {{/if}}
   </div>
 </div>
-
-<div class="row">
-  <div class="col s6 offset-s3" style="text-align: center; margin-top: 1rem;">
-    <ul class="collection with-header" style="margin: auto 0;">
-      <li class="collection-header">
-        <p style="font-weight: bold; font-size: 1.5rem;">Student list</p>
-      </li>
-      {{#if group_students.length}}
+<form action="/groups/delete_students" method="POST">
+  <div class="row">
+    <div class="col s6 offset-s3" style="text-align: center; margin-top: 1rem;">
+      <input type="hidden" name="groupId" value="{{group._id}}">
+      <ul class="collection with-header" style="margin: auto 0;">
+        <li class="collection-header">
+          <p style="font-weight: bold; font-size: 1.5rem;">Student list</p>
+        </li>
+        {{#if group_students.length}}
         {{#each group_students}}
-          <li class="collection-item">{{name}}</li>
+        <li class="collection-item" style="display: flex;">
+            <p>
+              <label>
+                <input type="checkbox" name="userId[]" value="{{_id}}">
+                <span></span>
+              </label>
+            </p>
+            <p>{{name}}</p>
+        </li>
         {{/each}}
-      {{/if}}
-    </ul>
-  </div>
+        {{/if}}
+      </ul>
+      <button type="submit" class="btn waves-effect" style="margin-top: 1rem;"> Delete students </button>
+</form>
+</div>
 </div>
