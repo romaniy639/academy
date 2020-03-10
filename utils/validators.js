@@ -29,19 +29,19 @@ exports.loginValidators = [
 
 exports.registerValidators = [
     body('username', 'Incorrect username format')
-        .exists()    
+        .exists()
         .trim()
         .isLength({min: 3, max: 20})
         .isAlphanumeric(),
 
     body('password', 'Incorrect password format')
-        .exists()    
+        .exists()
         .trim()
         .isLength({min: 3, max: 20})
         .isAlphanumeric(),
 
     body('email', 'Incorrect e-mail format')
-        .exists()    
+        .exists()
         .trim()
         .isEmail()
         .custom(async (value, {req}) => {
@@ -54,13 +54,13 @@ exports.registerValidators = [
 
 exports.changePasswordValidators = [
     body('newPassword', 'Incorrect new password format')
-        .exists()    
+        .exists()
         .trim()
         .isLength({min: 3, max: 20})
         .isAlphanumeric(),
     
     body('oldPassword', 'Incorrect old password format')
-        .exists()    
+        .exists()
         .trim()
         .isLength({min: 3, max: 20})
         .isAlphanumeric()
@@ -92,7 +92,7 @@ exports.addStudentValidator = [
         }),
 
     body('groupId')
-        .exists()    
+        .exists()
         .isMongoId().withMessage('Incorrect group id format')
         .custom(async (value, {req}) => {
             const group = await Group.findById(value)
@@ -159,4 +159,40 @@ exports.groupDeleteValidator = [
             if (!group) throw new Error('Group does not exist')
             return true
         })
+]
+
+exports.resetValidators = [
+    body('email', 'Incorrect e-mail format')
+        .exists()
+        .trim()
+        .isEmail()
+        .custom(async (value, {req}) => {
+            const user = await User.findOne({email: value})
+            if (!user) throw new Error('User does not exist')
+            return true
+        })
+        .normalizeEmail()
+]
+
+exports.setPasswordValidators = [
+    body('password', 'Incorrect password format')
+        .exists()
+        .trim()
+        .isLength({min: 3, max: 20})
+        .isAlphanumeric(),
+
+    body('cpassword', 'Incorrect confirm password format')
+        .exists()
+        .trim()
+        .isLength({min: 3, max: 20})
+        .isAlphanumeric()
+        .custom(async (value, {req}) => {
+            if (req.body.password !== value) throw new Error('Passwords mismatch')
+            return true
+        }),
+
+    body('userId', 'Incorrect user id format')
+        .exists()
+        .trim()
+        .isMongoId()
 ]

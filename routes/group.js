@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const { validationResult } = require('express-validator')
 const Group = require('../models/group')
-const authMiddleware = require('../middleware/auth')
+const {authMiddleware} = require('../middleware/auth')
 const teacherMiddleware = require('../middleware/teacher')
 const flash = require('connect-flash')
 const ObjectId = require('mongodb').ObjectID
