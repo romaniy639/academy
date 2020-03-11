@@ -10,6 +10,11 @@ const { groupIdValidator, addStudentValidator, notificationValidator, groupNameV
 
 const router = new Router()
 
+router.get('/test', (req,res) => {
+  res.render('schedule/test')
+})
+
+
 router.get('/', authMiddleware, async (req, res) => {
   const { role } = await User.findById(req.session.userId)
   res.render('groups/show-reg-notify', {

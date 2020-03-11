@@ -1,23 +1,127 @@
-<div id="div" style="width: 15%;"></div>
-<input type="button" id="button" value="Создать">
+<head>
+    <style>
+        .dynamic_fields,
+        .dynamic_fields * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .example_student {
+            display: none;
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+
+        .pull-right {
+            float: right;
+        }
+
+        .table {
+            display: table;
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .student:last-child .table {
+            padding-bottom: 0;
+        }
+
+        .table .cell {
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        .table .cell:last-child {
+            width: 1px;
+            padding-left: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .btn-danger {
+            color: #fff;
+            background-color: #d9534f;
+            border-color: #d43f3a;
+        }
+
+        .btn-success {
+            color: #fff;
+            background-color: #5cb85c;
+            border-color: #4cae4c;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="dynamic_fields">
+    <div class="example_student">
+        <div class="table">
+            <div class="cell"><input class="form-control" type="text" name="name[]" /></div>
+            <div class="cell">
+                <button class="js-remove pull-right btn btn-danger">-</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="students"></div>
+
+    <button class="js-add pull-right btn btn-success">+</button>
+</div>
+
 <script>
-    var count = 1
-    button.addEventListener("click", function () {
-        var input = document.createElement('INPUT')
-        input.type = 'text'
-        input.setAttribute("data-id", "subject" + count)
-        input.name = "course[]"
-        document.querySelector('#div').appendChild(input)
-        var input2 = document.createElement('INPUT')
-        input2.type = 'text'
-        input2.setAttribute("data-id", "teacher" + count)
-        input2.name = "teacher[]"
-        document.querySelector('#div').appendChild(input2)
-        var input3 = document.createElement('INPUT')
-        input3.type = 'text'
-        input3.setAttribute("data-id", "classroom" + count)
-        input3.name = "classroom[]"
-        document.querySelector('#div').appendChild(input3)
-        count++
-    })
-</script>
+    button_add.addEventListener('click', function () {
+        var students = document.querySelector('.dynamic_fields .students');
+        var element = document.querySelector('.example_student').cloneNode(true);
+        element.classList.add('student');
+        element.classList.remove('example_student');
+        students.appendChild(element);
+    });
+    document.addEventListener('click', function (el) {
+
+        if (el.target && el.target.classList.contains('js-remove')) {
+            var child = el.target.closest('.table');
+            child.parentNode.removeChild(child);
+        }
+    });
+</script>    
+</body>
