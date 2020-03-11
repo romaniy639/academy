@@ -1,23 +1,52 @@
-<div id="div" style="width: 15%;"></div>
-<input type="button" id="button" value="Создать">
+<div class="row" id="daySelect">
+    <div class="col s12" style="text-align: center;">
+        <div class="tab col s2 offset-s1"><p><label><input type="checkbox" id="mon" onclick="state_change(this)"/><span>Monday</span></label></p></div>
+        <div class="tab col s2"><p><label><input type="checkbox" id="tue" onclick="state_change(this)"/><span>Tuesday</span></label></p></div>
+        <div class="tab col s2"><p><label><input type="checkbox" id="wed" onclick="state_change(this)"/><span>Wednesday</span></label></p></div>
+        <div class="tab col s2"><p><label><input type="checkbox" id="thu" onclick="state_change(this)"/><span>Thursday</span></label></p></div>
+        <div class="tab col s2"><p><label><input type="checkbox" id="fri" onclick="state_change(this)"/><span>Friday</span></label></p></div>
+    </div>
+</div>
+
 <script>
-    var count = 1
-    button.addEventListener("click", function () {
-        var input = document.createElement('INPUT')
-        input.type = 'text'
-        input.setAttribute("data-id", "subject" + count)
-        input.name = "value[]"
-        document.querySelector('#div').appendChild(input)
-        var input2 = document.createElement('INPUT')
-        input2.type = 'text'
-        input2.setAttribute("data-id", "teacher" + count)
-        input2.name = "value[]"
-        document.querySelector('#div').appendChild(input2)
-        var input3 = document.createElement('INPUT')
-        input3.type = 'text'
-        input3.setAttribute("data-id", "classroom" + count)
-        input3.name = "value[]"
-        document.querySelector('#div').appendChild(input3)
-        count++
-    })
+
+    const week = ['friday', 'thursday', 'wednesday', 'tuesday', 'monday']
+    const days = {
+        mon: week[4],
+        tue: week[3],
+        wed: week[2],
+        thu: week[1],
+        fri: week[0]
+    }
+    
+    function newDayContainer(day) {
+        const div = document.createElement('div')
+        div.className = 'row'
+        div.id = day
+        div.innerHTML = `
+        <div class="col s2 offset-s2" style="text-align: center;"><p>${day.charAt(0).toUpperCase()+day.slice(1)}</p></div>
+        <ul class="collection col s6">
+            <li>
+                <input class="col s2 offset-s1" name="courseName" type="text" placeholder="Course">
+                <input class="col s2 offset-s2" name="courseTeacher" type="text" placeholder="Teacher">
+                <input class="col s2 offset-s2" name="classroom" type="text" placeholder="Classroom" min="1">
+            </li>
+        </ul>
+        `
+        if (!week.slice(week.indexOf(day) + 1).some(x => {
+            if (document.getElementById(x)) {
+                document.getElementById(x).after(div)
+                return true
+            }
+        })) document.getElementById('daySelect').after(div)
+    }
+    
+    function state_change(checkbox)
+    {
+        if (checkbox.checked)
+            newDayContainer(days[checkbox.id])
+        else if (document.getElementById(days[checkbox.id]))
+            document.getElementById(days[checkbox.id]).remove()
+    }
+
 </script>
