@@ -77,7 +77,7 @@ router.get('/reset', authNotMiddleware, (req, res) => {
     })
 })
 
-router.post('/reset', authNotMiddleware, resetValidators, (req, res) => {
+router.patch('/reset', authNotMiddleware, resetValidators, (req, res) => {
     try {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
@@ -118,14 +118,13 @@ router.get('/password/:token', authNotMiddleware, async (req, res) => {
     }
 })
 
-router.post('/password', authNotMiddleware, setPasswordValidators, async (req, res) => {
+router.patch('/password', authNotMiddleware, setPasswordValidators, async (req, res) => {
     try {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             req.flash('error', errors.array()[0].msg)
-            return res.status(422).redirect('/password/'+req.body.token)
+            return res.status(422).redirect('/password/' + req.body.token)
         }
-
         await User.findOneAndUpdate({
             _id: req.body.userId,
             resetToken: req.body.token,
@@ -140,14 +139,13 @@ router.post('/password', authNotMiddleware, setPasswordValidators, async (req, r
     }
 })
 
-router.post('/change_password', authMiddleware, changePasswordValidators, async (req,res)=> {
+router.patch('/change_password', authMiddleware, changePasswordValidators, async (req,res)=> {
     try {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             req.flash('error', errors.array()[0].msg)
             return res.status(422).redirect('/profile')
         }
-
         const oldUserPassword = (await User.findById(req.session.userId)).password
         if (await bcrypt.compare(req.body.oldPassword, oldUserPassword)) {
             await User.findByIdAndUpdate(req.session.userId, {password: (await bcrypt.hash(req.body.newPassword, 10)).toString()})

@@ -9,7 +9,6 @@
 </div>
 
 <script>
-
     const week = ['friday', 'thursday', 'wednesday', 'tuesday', 'monday']
     const days = {
         mon: week[4],
@@ -23,24 +22,173 @@
         const div = document.createElement('div')
         div.className = 'row'
         div.id = day
-        div.innerHTML = `
-        <div class="col s2 offset-s2" style="text-align: center;"><p>${day.charAt(0).toUpperCase()+day.slice(1)}</p></div>
-        <ul class="collection col s6">
-            <li>
-                <input class="col s2 offset-s1" name="courseName" type="text" placeholder="Course">
-                <input class="col s2 offset-s2" name="courseTeacher" type="text" placeholder="Teacher">
-                <input class="col s2 offset-s2" name="classroom" type="text" placeholder="Classroom" min="1">
-            </li>
-        </ul>
+        div.innerHTML = `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+                        .dynamic_fields, .dynamic_fields * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .example_student {
+            display: none;
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+
+        .pull-right {
+            float: right;
+        }
+
+        .table {
+            display: table;
+            width: 100%;
+            padding-bottom: 10px;
+        }
+        .student:last-child .table {
+            padding-bottom: 0;
+        }
+
+        .table .cell {
+            display: table-cell;
+            vertical-align: top;
+            
+        }
+
+        .table .cell:last-child {
+            width: 1px;
+            padding-left: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .btn-danger {
+            color: #fff;
+            background-color: #d9534f;
+            border-color: #d43f3a;
+        }
+
+        .btn-success {
+            color: #fff;
+            background-color: #5cb85c;
+            border-color: #4cae4c;  
+        }
+        </style> 
+</head>
+
+<body>
+    <div class="dynamic_fields">
+        <div class="example_student">
+            <div class="table">
+                <div class="cell">
+                    <input type="text" name="name[]" />
+                    <input type="text" name="name[]" />
+                    <input type="text" name="name[]" />
+                </div>
+                <div class="cell">
+                    <button class="js-remove pull-right btn btn-danger">-</button>
+                </div>
+            </div>
+        </div>
+        <div class="students">
+            <div class="table">
+                <div class="cell">
+                    <input type="text" name="courseName[]" />
+                    <input type="text" name="courseTeacher[]" />
+                    <input type="text" name="courseClassrom[]" />
+                </div>
+                <div class="cell">
+                    <button class="js-add pull-right btn btn-success">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
         `
-        if (!week.slice(week.indexOf(day) + 1).some(x => {
+    
+    if (!week.slice(week.indexOf(day) + 1).some(x => {
             if (document.getElementById(x)) {
                 document.getElementById(x).after(div)
                 return true
             }
         })) document.getElementById('daySelect').after(div)
+        
+    var button_add = document.querySelector('.dynamic_fields .js-add');
+        console.log(button_add)
+
+        button_add.addEventListener('click', function () {
+
+            var students = document.querySelector('.dynamic_fields .students');
+
+            var element = document.querySelector('.example_student').cloneNode(true);
+
+            element.classList.add('student');
+
+            element.classList.remove('example_student');
+
+            students.appendChild(element);
+        });
+
+        document.addEventListener('click', function (el) {
+
+            if (el.target && el.target.classList.contains('js-remove')) {
+
+                var child = el.target.closest('.table');
+
+                child.parentNode.removeChild(child);
+            }
+        });
+
     }
     
+    
+
     function state_change(checkbox)
     {
         if (checkbox.checked)

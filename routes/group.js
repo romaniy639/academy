@@ -6,14 +6,9 @@ const teacherMiddleware = require('../middleware/teacher')
 const flash = require('connect-flash')
 const ObjectId = require('mongodb').ObjectID
 const User = require('../models/user')
-const { groupIdValidator, addStudentValidator, notificationValidator, groupNameValidator, groupEditValidator, groupDeleteValidator } = require('../utils/validators')
+const {groupIdValidator, addStudentValidator, notificationValidator, groupNameValidator, groupEditValidator, groupDeleteValidator, deleteStudentsValidators} = require('../utils/validators')
 
 const router = new Router()
-
-router.get('/test', (req,res) => {
-  res.render('schedule/test')
-})
-
 
 router.get('/', authMiddleware, async (req, res) => {
   const { role } = await User.findById(req.session.userId)
@@ -94,7 +89,7 @@ router.post('/create', authMiddleware, teacherMiddleware, groupNameValidator, as
   }
 })
 
-router.post('/edit', authMiddleware, teacherMiddleware, groupEditValidator, async (req, res) => {
+router.patch('/edit', authMiddleware, teacherMiddleware, groupEditValidator, async (req, res) => {
   try {
     const {id} = req.body
     const errors = validationResult(req)
@@ -111,8 +106,13 @@ router.post('/edit', authMiddleware, teacherMiddleware, groupEditValidator, asyn
   }
 })
 
-router.post('/delete_students', authMiddleware, teacherMiddleware, async (req, res) => {
+router.patch('/delete_students', authMiddleware, teacherMiddleware, deleteStudentsValidators, async (req,res) => {
   try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).redirect('/groups/' + req.body.groupId)
+    }
+
     let students_id = (await Group.findById(req.body.groupId)).students
     let delete_students = []
     for (let i = students_id.length - 1; i >= 0; i--) {
@@ -129,7 +129,7 @@ router.post('/delete_students', authMiddleware, teacherMiddleware, async (req, r
   }
 })
 
-router.post('/delete', authMiddleware, teacherMiddleware, groupDeleteValidator, async (req, res) => {
+router.delete('/delete', authMiddleware, teacherMiddleware, groupDeleteValidator, async (req, res) => {
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
