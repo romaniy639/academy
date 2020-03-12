@@ -43,11 +43,12 @@ router.put('/add_student', authMiddleware, teacherMiddleware, addStudentValidato
       //req.flash('error', errors.array()[0].msg)
       return res.status(422).json({message: `${errors.array()[0].msg}`})
     }
-    const group = await Group.findByIdAndUpdate(req.body.groupId, { $push: { students: req.body.studentId } })
+    await Group.findByIdAndUpdate(req.body.groupId, { $push: { students: req.body.studentId } })
     const user = await User.findByIdAndUpdate(req.body.studentId, { group: req.body.groupId })
     res.status(200).json({
-      group,
-      user: {
+      group: await Group.findById(req.body.groupId),
+      user: await User.findById(req.session.userId).select("name email _id role"),
+      addedStudent: {
         name: user.name,
         email: user.email,
         _id: user._id,
@@ -110,16 +111,12 @@ router.put('/delete_students', authMiddleware, teacherMiddleware, deleteStudents
       return res.status(422).json({message: `${errors.array()[0].msg}`})
     }
     let students_id = (await Group.findById(req.body.groupId)).students
-    let delete_students = []
-    for (let i = students_id.length - 1; i >= 0; i--) {
-      if (req.body.userId[i]) {
-        delete_students.push(students_id[i])
-      }
-    }
-    students_id = students_id.filter(st => !(delete_students.includes(st)))
-    const group = await Group.findByIdAndUpdate(req.body.groupId, { students: students_id })
-    await User.updateMany({ _id: delete_students }, { $unset: { group: "" } })
-    res.status(200).json({ group, users: await User.find({group: req.body.groupId})})
+    students_id = students_id.filter(st => !(req.body.userId.includes(st.toString())))
+    await Group.findByIdAndUpdate(req.body.groupId, { students: students_id })
+    await User.updateMany({ _id: req.body.userId }, { $unset: { group: "" } })
+    res.status(200).json({ 
+      group: await Group.findById(req.body.groupId), 
+      users: await User.find({group: req.body.groupId})})
   } catch (e) {
     console.log(e)
   }
