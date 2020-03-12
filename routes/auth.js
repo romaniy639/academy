@@ -58,6 +58,25 @@ router.get('/logout', authMiddleware, async (req, res) => {
     })
 })
 
+router.get('/password/:token', authNotMiddleware, async (req, res) => {
+    try {
+        if (!req.params.token) res.redirect('/login')
+
+        const user = await User.findOne({resetToken: req.params.token, resetTokenExp: {$gt: Date.now()}})
+        if (!user) {
+            return res.redirect('/login')
+        } else {
+            res.render('auth/password', {
+                title: 'Update password',
+                userId: user._id.toString(),
+                token: req.params.token
+            })
+        }
+    } catch (e) {
+        console.log(e)
+    }
+})
+
 router.get('/profile', authMiddleware, async (req,res)=> {
     const user = await User.findById(req.session.userId)
     res.render('profile', {
@@ -99,24 +118,6 @@ router.patch('/reset', authNotMiddleware, resetValidators, (req, res) => {
     }
 })
 
-router.get('/password/:token', authNotMiddleware, async (req, res) => {
-    try {
-        if (!req.params.token) res.redirect('/login')
-
-        const user = await User.findOne({resetToken: req.params.token, resetTokenExp: {$gt: Date.now()}})
-        if (!user) {
-            return res.redirect('/login')
-        } else {
-            res.render('auth/password', {
-                title: 'Update password',
-                userId: user._id.toString(),
-                token: req.params.token
-            })
-        }
-    } catch (e) {
-        console.log(e)
-    }
-})
 
 router.patch('/password', authNotMiddleware, setPasswordValidators, async (req, res) => {
     try {
