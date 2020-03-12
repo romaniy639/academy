@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport(sendgrid({
 
 router.delete('/logout', authMiddleware, async (req, res) => {
     req.session.destroy(() => {
-        res.status(200).json("Session deleted...")
+        res.status(200).json({message: "Session deleted..."})
     })
 })
 
@@ -29,10 +29,9 @@ router.get('/password/:token', authNotMiddleware, async (req, res) => {
 
         const user = await User.findOne({ resetToken: req.params.token, resetTokenExp: { $gt: Date.now() } })
         if (!user) {
-            return res.status(404).json("User not found...")
+            return res.status(404).json({message: "User not found..."})
         } else {
-            res.render('auth/password', {
-                title: 'Update password',
+            return res.status(200).json({
                 userId: user._id.toString(),
                 token: req.params.token
             })
@@ -45,31 +44,32 @@ router.get('/password/:token', authNotMiddleware, async (req, res) => {
 router.get('/profile', authMiddleware, async (req, res) => {
     const user = await User.findById(req.session.userId)
     res.status(200).json({
-        isTeacher: user.role === 'teacher',
-        isAdmin: user.role === 'admin',
         isAuth: req.session.isAuth,
-        name: user.name,
-        email: user.email,
-        password: user.password
+        user: await User.findById(req.session.userId).select("name email _id role")
     })
 })
 
-router.patch('/reset', authNotMiddleware, resetValidators, (req, res) => {
+router.put('/reset', authNotMiddleware, resetValidators, (req, res) => {
     try {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
-            req.flash('error', errors.array()[0].msg)
-            return res.status(422).json(`${errors.array()[0].msg}`)
+            //req.flash('error', errors.array()[0].msg)
+            return res.status(422).json({message: `${errors.array()[0].msg}`})
         }
 
         crypto.randomBytes(32, async (err, buffer) => {
             if (err) {
-                req.flash('error', 'Oops! Something went wrong...')
-                return res.status(422).json("Oops! Something went wrong...")
+                //req.flash('error', 'Oops! Something went wrong...')
+                return res.status(422).json({message: "Oops! Something went wrong..."})
             }
             const user = await User.findOneAndUpdate({ email: req.body.email }, { resetToken: buffer.toString('hex'), resetTokenExp: Date.now() + 3600000 })
             await transporter.sendMail(resEmail(req.body.email, buffer.toString('hex')))
-            res.status(200).json({user})
+            res.status(200).json({user: {
+                name: user.name,
+                email: user.email,
+                _id: user._id,
+                role: user.role
+            }})
         })
     } catch (e) {
         console.log(e)
@@ -77,12 +77,12 @@ router.patch('/reset', authNotMiddleware, resetValidators, (req, res) => {
 })
 
 
-router.patch('/password', authNotMiddleware, setPasswordValidators, async (req, res) => {
+router.put('/password', authNotMiddleware, setPasswordValidators, async (req, res) => {
     try {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
-            req.flash('error', errors.array()[0].msg)
-            return res.status(422).json(`${errors.array()[0].msg}`)
+            //req.flash('error', errors.array()[0].msg)
+            return res.status(422).json({message: `${errors.array()[0].msg}`})
         }
         const user = await User.findOneAndUpdate({
             _id: req.body.userId,
@@ -92,27 +92,37 @@ router.patch('/password', authNotMiddleware, setPasswordValidators, async (req, 
             password: await bcrypt.hash(req.body.password, 10),
             $unset: { resetToken: "", resetTokenExp: "" }
         })
-        res.status(200).json({user})
+        res.status(200).json({user: {
+            name: user.name,
+            email: user.email,
+            _id: user._id,
+            role: user.role
+        }})
     } catch (e) {
         console.log(e)
     }
 })
 
-router.patch('/change_password', authMiddleware, changePasswordValidators, async (req, res) => {
+router.put('/change_password', authMiddleware, changePasswordValidators, async (req, res) => {
     try {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
-            req.flash('error', errors.array()[0].msg)
-            return res.status(422).json(`${errors.array()[0].msg}`)
+            //req.flash('error', errors.array()[0].msg)
+            return res.status(422).json({message: `${errors.array()[0].msg}`})
         }
         const oldUserPassword = (await User.findById(req.session.userId)).password
         if (await bcrypt.compare(req.body.oldPassword, oldUserPassword)) {
             const user = await User.findByIdAndUpdate(req.session.userId, { password: (await bcrypt.hash(req.body.newPassword, 10)).toString() })
-            req.flash('success', 'Password has been changed...')
-            res.status(200).json({user})
+            //req.flash('success', 'Password has been changed...')
+            res.status(200).json({user: {
+                name: user.name,
+                email: user.email,
+                _id: user._id,
+                role: user.role
+            }})
         } else {
-            req.flash('error', 'Invalid old password')
-            res.status(422).json("Invalid old password...")
+            //req.flash('error', 'Invalid old password')
+            res.status(422).json({message: "Invalid old password..."})
         }
     } catch (e) {
         console.log(e)
@@ -123,8 +133,8 @@ router.post('/login', loginValidators, async (req, res) => {
     try {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
-            req.flash('error', errors.array()[0].msg)
-            return res.status(422).json(`${errors.array()[0].msg}`)
+            //req.flash('error', errors.array()[0].msg)
+            return res.status(422).json({message: `${errors.array()[0].msg}`})
         }
         const user = await User.findById(req.session.userId).select("name email _id role")
         res.status(200).json({user})
@@ -137,8 +147,8 @@ router.post('/register', authMiddleware, registerValidators, async (req, res) =>
     try {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
-            req.flash('error', errors.array()[0].msg)
-            return res.status(422).json(`${errors.array()[0].msg}`)
+            //req.flash('error', errors.array()[0].msg)
+            return res.status(422).json({message: `${errors.array()[0].msg}`})
         }
 
         const { username, password, email } = req.body
@@ -153,7 +163,12 @@ router.post('/register', authMiddleware, registerValidators, async (req, res) =>
             })
             await user.save()
             await transporter.sendMail(regEmail(username, email, password))
-            res.status(200).json({user})
+            res.status(200).json({user: {
+                name: user.name,
+                email: user.email,
+                _id: user._id,
+                role: user.role
+            }})
         }
     } catch (e) {
         console.log(e)
