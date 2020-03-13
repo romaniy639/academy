@@ -11,9 +11,35 @@ const { groupIdValidator, addStudentValidator, notificationValidator, groupNameV
 const router = new Router()
 
 router.get('/', tokenMiddleware, async (req, res) => {
-  res.status(200).json({
-    groups: await Group.find()
-  })
+  res.status(200).json({groups: await Group.find()})
+})
+
+router.post('/notification', tokenMiddleware, notificationValidator, async (req, res) => {
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).json({message: `${errors.array()[0].msg}`})
+    }
+    const teacherName = (await User.findById(req.userId)).name
+    await User.updateMany({ group: req.body.group }, { $push: { notification: { author: teacherName, message: req.body.message } } })
+    res.status(200).json({users: await User.find({group: req.body.group}).select("name email _id role")})
+  } catch (e) {
+    console.log(e)
+  }
+})
+
+router.post('/create', tokenMiddleware, groupNameValidator, async (req, res) => {
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).json({message: `${errors.array()[0].msg}`})
+    }
+    const newGroup = new Group({ name: req.body.name })
+    await newGroup.save()
+    res.status(200).json({newGroup})
+  } catch (e) {
+    console.log(e)
+  }
 })
 
 router.get('/:id', tokenMiddleware, groupIdValidator, async (req, res) => {
@@ -33,16 +59,29 @@ router.get('/:id', tokenMiddleware, groupIdValidator, async (req, res) => {
   }
 })
 
-router.put('/add_student', tokenMiddleware, teacherMiddleware, addStudentValidator, async (req, res) => {
+router.put('/:id', tokenMiddleware, groupEditValidator, async (req, res) => {
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({message: `${errors.array()[0].msg}`})
     }
-    await Group.findByIdAndUpdate(req.body.groupId, { $push: { students: req.body.studentId } })
-    const user = await User.findByIdAndUpdate(req.body.studentId, { group: req.body.groupId })
+    await Group.findByIdAndUpdate(req.params.id, { name: req.body.name })
+    res.status(200).json({group: await Group.findById(req.params.id)})
+  } catch (e) {
+    console.log(e)
+  }
+})
+
+router.put('/:id/add_student', tokenMiddleware, addStudentValidator, async (req, res) => {
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).json({message: `${errors.array()[0].msg}`})
+    }
+    await Group.findByIdAndUpdate(req.params.id, { $push: { students: req.body.studentId } })
+    const user = await User.findByIdAndUpdate(req.body.studentId, { group: req.params.id })
     res.status(200).json({
-      group: await Group.findById(req.body.groupId),
+      group: await Group.findById(req.params.id),
       addedStudent: {
         name: user.name,
         email: user.email,
@@ -54,74 +93,32 @@ router.put('/add_student', tokenMiddleware, teacherMiddleware, addStudentValidat
   }
 })
 
-router.post('/notification', tokenMiddleware, teacherMiddleware, notificationValidator, async (req, res) => {
+router.put('/:id/delete_students', tokenMiddleware, deleteStudentsValidators, async (req, res) => {
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({message: `${errors.array()[0].msg}`})
     }
-    const teacherName = (await User.findById(req.userId)).name
-    await User.updateMany({ group: req.body.group }, { $push: { notification: { author: teacherName, message: req.body.message } } })
-    res.status(200).json({users: await User.find({group: req.body.group}).select("name email _id role")})
-  } catch (e) {
-    console.log(e)
-  }
-})
-
-router.post('/create', tokenMiddleware, teacherMiddleware, groupNameValidator, async (req, res) => {
-  try {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(422).json({message: `${errors.array()[0].msg}`})
-    }
-    const newGroup = new Group({ name: req.body.name })
-    await newGroup.save()
-    res.status(200).json({newGroup})
-  } catch (e) {
-    console.log(e)
-  }
-})
-
-router.put('/edit', tokenMiddleware, teacherMiddleware, groupEditValidator, async (req, res) => {
-  try {
-    const { id } = req.body
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(422).json({message: `${errors.array()[0].msg}`})
-    }
-    const group = await Group.findByIdAndUpdate(id, { name: req.body.name })
-    res.status(200).json({group})
-  } catch (e) {
-    console.log(e)
-  }
-})
-
-router.put('/delete_students', tokenMiddleware, teacherMiddleware, deleteStudentsValidators, async (req, res) => {
-  try {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(422).json({message: `${errors.array()[0].msg}`})
-    }
-    let students_id = (await Group.findById(req.body.groupId)).students
-    students_id = students_id.filter(st => !(req.body.userId.includes(st.toString())))
-    await Group.findByIdAndUpdate(req.body.groupId, { students: students_id })
+    let students_id = (await Group.findById(req.params.id)).students
+    students_id = students_id.filter(st => !(req.params.id.includes(st.toString())))
+    await Group.findByIdAndUpdate(req.params.id, { students: students_id })
     await User.updateMany({ _id: req.body.userId }, { $unset: { group: "" } })
     res.status(200).json({ 
-      group: await Group.findById(req.body.groupId), 
-      users: await User.find({group: req.body.groupId})})
+      group: await Group.findById(req.params.id), 
+      users: await User.find({group: req.params.id})})
   } catch (e) {
     console.log(e)
   }
 })
 
-router.delete('/delete', tokenMiddleware, teacherMiddleware, groupDeleteValidator, async (req, res) => {
+router.delete('/:id/delete', tokenMiddleware, groupDeleteValidator, async (req, res) => {
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({message: `${errors.array()[0].msg}`})
     }
-    await User.updateMany({ group: req.body.id }, { $unset: { group: "" } })
-    const deleteGroup = await Group.findByIdAndDelete(req.body.id)
+    await User.updateMany({ group: req.params.id }, { $unset: { group: "" } })
+    const deleteGroup = await Group.findByIdAndDelete(req.params.id)
     res.status(200).json({deleteGroup})
   } catch (e) {
     console.log(e)

@@ -86,7 +86,7 @@ exports.addStudentValidator = [
             return true
         }),
 
-    body('groupId')
+    param('groupId')
         .exists()
         .isMongoId().withMessage('Incorrect group id format')
         .custom(async (value, {req}) => {
@@ -133,7 +133,7 @@ exports.groupEditValidator = [
             return true
         }),
 
-    body('id')
+    param('id')
         .exists()
         .trim()
         .isMongoId().withMessage('Incorrect group id format')
@@ -145,7 +145,7 @@ exports.groupEditValidator = [
 ]
 
 exports.groupDeleteValidator = [
-    body('id')
+    param('id')
         .exists()
         .trim()
         .isMongoId().withMessage('Incorrect group id format')
@@ -193,7 +193,7 @@ exports.setPasswordValidators = [
 ]
 
 exports.deleteStudentsValidators = [
-    body('groupId')
+    param('groupId')
         .exists()
         .trim()
         .isMongoId().withMessage('Incorrect group id format')
