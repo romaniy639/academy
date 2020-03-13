@@ -17,11 +17,6 @@ exports.loginValidators = [
             const candidate = await User.findOne({name: value})
 
             if (candidate && (await bcrypt.compare(req.body.password, candidate.password))) {
-                req.session.isAuth = true
-                req.session.userId = candidate._id 
-                req.session.save(err => {
-                    if (err) throw new Error(err)
-                })
                 return true
             } else throw new Error('Wrong password or user does not exist')
         })

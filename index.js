@@ -1,6 +1,5 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const exphbs = require('express-handlebars')
 const session = require('express-session')
 const flash = require('connect-flash')
 const keys = require('./keys')
@@ -8,18 +7,11 @@ const authRouter = require('./routes/auth')
 const groupRouter = require('./routes/group')
 const scheduleRouter = require('./routes/schedule')
 
+
 const PORT = 3000
 
 const app = express()
-const hbs = exphbs.create({
-    defaultLayout: 'main',
-    extname: 'hbs'
-})
 
-
-app.engine('hbs', hbs.engine)
-app.set('view engine', 'hbs')
-app.set('views', 'views')
 app.use(express.urlencoded({extended: true}))
 
 app.use(session({
@@ -27,6 +19,15 @@ app.use(session({
     resave: false, 
     saveUninitialized: false
 }))
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header ('Access-Control-Allow-Credentials', true)
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header, authToken");
+    res.header("Access-Control-Expose-Headers", "authToken")
+    res.set("Content-Type", "application/json")
+    next();
+  })
 
 
 app.use(flash())
