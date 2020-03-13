@@ -6,6 +6,7 @@ const keys = require('./keys')
 const authRouter = require('./routes/auth')
 const groupRouter = require('./routes/group')
 const scheduleRouter = require('./routes/schedule')
+var cookieParser = require('cookie-parser')
 
 
 const PORT = 3000
@@ -28,7 +29,7 @@ app.use(function(req, res, next) {
     res.set("Content-Type", "application/json")
     next();
   })
-
+app.use(cookieParser())
 
 app.use(flash())
 app.use((req, res, next) => {

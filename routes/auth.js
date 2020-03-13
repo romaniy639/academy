@@ -13,6 +13,7 @@ const regEmail = require('../emails/registration')
 const resEmail = require('../emails/reset')
 let jwt = require('jsonwebtoken')
 
+
 const router = new Router()
 const transporter = nodemailer.createTransport(sendgrid({
     auth: { api_key: keys.SENDGRID_API_KEY }
@@ -56,11 +57,12 @@ router.post('/login', loginValidators, async (req, res) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             return res.status(422).json({ message: `${errors.array()[0].msg}` })
-        }
-
+        } 
+        const user = await User.findOne({ name: req.body.username }).select("name email _id role")
+        const token = jwt.sign({userId: user._id}, keys.SECRET_TOKEN,{expiresIn: '24h'})
         res.status(200).json({
-            user: await User.findOne({ name: req.body.username }).select("name email _id role"),
-            token: jwt.sign({userId: user._id}, keys.SECRET_TOKEN,{expiresIn: '24h'}),
+            user,
+            token,
             message: 'Authentication successful!'
          })
     } catch (e) {
@@ -69,7 +71,7 @@ router.post('/login', loginValidators, async (req, res) => {
 })
 
 router.delete('/logout', tokenMiddleware, async (req, res) => {
-        res.status(200).json({ message: "Session deleted...", token: null })
+        res.clearCookie('authToken').status(200).json({ message: "Session deleted..."})
 })
 
 router.put('/reset', tokenMiddleware, resetValidators, (req, res) => {
@@ -165,5 +167,6 @@ router.put('/profile', tokenMiddleware, changePasswordValidators, async (req, re
         console.log(e)
     }
 })
+
 
 module.exports = router
