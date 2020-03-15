@@ -1,1 +1,1 @@
-https://documenter.getpostman.com/view/10691698/SzS1UUkF?version=latest
+https://documenter.getpostman.com/view/10660085/SzS2xUBT
