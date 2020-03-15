@@ -2,8 +2,6 @@ const { Router } = require('express')
 const { validationResult } = require('express-validator')
 const Group = require('../models/group')
 const { tokenMiddleware } = require('../middleware/auth')
-const flash = require('connect-flash')
-const ObjectId = require('mongodb').ObjectID
 const User = require('../models/user')
 const { groupIdValidator, addStudentValidator, notificationValidator, groupNameValidator, groupEditValidator, groupDeleteValidator, deleteStudentsValidators } = require('../utils/validators')
 
@@ -50,7 +48,7 @@ router.get('/:id', tokenMiddleware, groupIdValidator, async (req, res) => {
     res.status(200).json({
       group: await Group.findById(req.params.id),
       user: await User.findById(req.userId).select("name email _id role"),
-      students: (await User.find({ role: "student" })).filter(c => !c.group),
+      students: (await User.find({ role: "student" }).select("name email _id role group")).filter(c => !c.group),
       group_students: (await Group.findById(req.params.id).populate('students', 'name').select('name')).students
     })
   } catch (e) {
@@ -99,12 +97,10 @@ router.put('/:id/delete_students', tokenMiddleware, deleteStudentsValidators, as
       return res.status(422).json({message: `${errors.array()[0].msg}`})
     }
     let students_id = (await Group.findById(req.params.id)).students
-    students_id = students_id.filter(st => !(req.params.id.includes(st.toString())))
+    students_id = students_id.filter(st => !(req.body.userId.includes(st.toString())))
     await Group.findByIdAndUpdate(req.params.id, { students: students_id })
     await User.updateMany({ _id: req.body.userId }, { $unset: { group: "" } })
-    res.status(200).json({ 
-      group: await Group.findById(req.params.id), 
-      users: await User.find({group: req.params.id})})
+    res.status(200).json({group: await Group.findById(req.params.id)})
   } catch (e) {
     console.log(e)
   }

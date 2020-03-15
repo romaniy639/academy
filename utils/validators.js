@@ -86,7 +86,7 @@ exports.addStudentValidator = [
             return true
         }),
 
-    param('groupId')
+    param('id')
         .exists()
         .isMongoId().withMessage('Incorrect group id format')
         .custom(async (value, {req}) => {
@@ -193,7 +193,7 @@ exports.setPasswordValidators = [
 ]
 
 exports.deleteStudentsValidators = [
-    param('groupId')
+    param('id')
         .exists()
         .trim()
         .isMongoId().withMessage('Incorrect group id format')
@@ -213,7 +213,8 @@ exports.deleteStudentsValidators = [
         .custom(async (value, {req}) => {
             const user = await User.findById(value)
             if (!user) throw new Error('User does not exist')
-            else if (user.group.toString() !== req.body.groupId) throw new Error('User is not in current group')
+            else if (!user.group) throw new Error('User is not in group')
+            else if (user.group.toString() !== req.params.id) throw new Error('User is not in current group')
             return true
         })
 ]
