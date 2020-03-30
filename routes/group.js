@@ -95,7 +95,7 @@ router.post("/:id/notification", tokenMiddleware, isTeacherMiddleware, notificat
     await User.updateMany({
       group: req.params.id
     }, {
-      $push: { notification: { author: req.user.name, message: req.body.message } }
+      $push: { notification: { author: req.user.name, message: req.body.message, expiredTime: Date.now() + 172800000 } }
     });
     res.status(200).json({ notifiedUsers: await User.find({ group: req.params.id }).select("_id") });
   } catch (e) {

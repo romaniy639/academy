@@ -7,23 +7,28 @@ const authRouter = require("./routes/auth");
 const groupRouter = require("./routes/group");
 const scheduleRouter = require("./routes/schedule");
 
-const PORT = 3000;
+const PORT = 5000;
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ extended: true }));
-app.use(session({
-  secret: keys.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(
+  session({
+    secret: keys.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+  })
+);
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Origin", true);
   res.header(
-    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
     "Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header, authToken"
   );
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authToken");
   res.header("Access-Control-Expose-Headers", "authToken");
   res.set("Content-Type", "application/json");
   next();
@@ -51,7 +56,7 @@ async function start() {
       useUnifiedTopology: true
     });
     app.listen(PORT, () => {
-      console.log("Server has been started...");
+      console.log(`Server has been started on port ${PORT} ...`);
     });
   } catch (e) {
     console.log(e);

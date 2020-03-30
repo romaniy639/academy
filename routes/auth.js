@@ -136,6 +136,20 @@ router.get("/profile", tokenMiddleware, async (req, res) => {
   });
 });
 
+router.get("/notifications", tokenMiddleware, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  let notifications = [];
+  for (let notice of user.notification) {
+    if (notice.expiredTime >= Date.now()) {
+      notifications.push(notice)
+    }
+  }
+  await User.findByIdAndUpdate(req.user.id, {notification: notifications})
+  res.status(200).json({
+    notifications 
+  });
+});
+
 router.put("/profile", tokenMiddleware, changePasswordRules, async (req, res) => {
   try {
     const oldUserPassword = (await User.findById(req.user.id)).password;
