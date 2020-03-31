@@ -1,5 +1,7 @@
+/* eslint-disable prettier/prettier */
 const User = require('../models/user')
 const Group = require('../models/group')
+const Schedule = require('../models/schedule')
 const bcrypt = require('bcryptjs')
 const { body, param } = require('express-validator')
 const { validationResult } = require("express-validator")
@@ -243,6 +245,104 @@ exports.deleteStudentsRules = [
       if (!user) throw new Error('User does not exist')
       else if (!user.group) throw new Error('User is not in group')
       else if (user.group.toString() !== req.params.id) throw new Error('User is not in current group')
+      return true
+    }),
+
+  (req, res, next) => checkErrors(req, res, next)
+]
+
+exports.scheduleRules = [
+  body('group')
+    .exists()
+    .trim()
+    .isMongoId().withMessage('Incorrect group id format')
+    .custom(async (value, { req }) => {
+      const group = await Group.findById(value)
+      if (!group) throw new Error('Group does not exist')
+      else if (await Schedule.findOne({ group })) throw new Error('Schedule for this group is already exists...')
+      return true
+    }),
+
+  body('week')
+    .exists()
+    .custom(async (value, { req }) => {
+      const week = Object.keys(value);
+      
+      if (JSON.stringify(week.sort()) !== '["friday","monday","thursday","tuesday","wednesday"]')
+        throw new Error('Incorrect week format')
+         
+      if (week.some(day => !(Array.isArray(value[day]) || value[day] === null)))
+        throw new Error('Incorrect day format')
+
+      if (week.every(day => !value[day]))
+        throw new Error('Empty week found')
+
+      if (
+        week
+          .filter(day => value[day])
+          .map(day => value[day])
+          .some(day =>
+            day.some(
+              lesson =>
+                !(
+                  typeof lesson.courseName === "string" &&
+                  typeof lesson.courseTeacher === "string" &&
+                  typeof lesson.classroom === "string"
+                )
+            )
+          )
+      ) throw new Error('Incorrect lesson format')
+
+      if (
+        week
+          .filter(day => value[day])
+          .map(day => value[day])
+          .some(day =>
+            day.some(
+              lesson =>
+                !(
+                  (lesson.courseName.trim().length === 0 &&
+                    lesson.courseTeacher.trim().length === 0 &&
+                    lesson.classroom.trim().length === 0) ||
+                  (lesson.courseName.trim().length > 2 &&
+                    lesson.courseTeacher.trim().length > 2 &&
+                    lesson.classroom.trim().length > 2 &&
+                    lesson.courseName.trim().length < 21 &&
+                    lesson.courseTeacher.trim().length < 21 &&
+                    lesson.classroom.trim().length < 21)
+                )
+            )
+          )
+      ) throw new Error('Incomplete lesson found')
+
+      if (
+        week
+          .filter(day => value[day])
+          .map(day => value[day])
+          .some(day =>
+            day.every(
+              lesson =>
+                lesson.courseName.trim().length === 0 &&
+                lesson.courseTeacher.trim().length === 0 &&
+                lesson.classroom.trim().length === 0
+            )
+          )
+      ) throw new Error('Empty day found')
+
+      return true
+    }),
+
+  (req, res, next) => checkErrors(req, res, next)
+]
+
+exports.scheduleIdRules = [
+  param('id')
+    .exists()
+    .trim()
+    .isMongoId().withMessage('Incorrect schedule id format')
+    .custom(async (value, { req }) => {
+      const schedule = await Schedule.findById(value)
+      if (!schedule) throw new Error('Schedule does not exist')
       return true
     }),
 

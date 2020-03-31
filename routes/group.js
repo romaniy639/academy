@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 const { Router } = require("express");
 const Group = require("../models/group");
 const { tokenMiddleware, isTeacherMiddleware } = require("../middleware/auth");
