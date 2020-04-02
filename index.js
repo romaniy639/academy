@@ -22,18 +22,19 @@ app.use(
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Expose-Headers", "authToken");
+  res.set("Content-Type", "application/json");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header, authToken"
   );
-  res.header("Access-Control-Expose-Headers", "authToken");
-  res.set("Content-Type", "application/json");
   next();
 });
 app.use(cookieParser());
 
 app.use("/", authRouter);
-app.use("/schedule", scheduleRouter);
+app.use("/schedules", scheduleRouter);
 app.use("/groups", groupRouter);
 
 app.use(function(req, res) {

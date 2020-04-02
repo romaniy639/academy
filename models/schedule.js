@@ -47,14 +47,7 @@ module.exports = model(
         ref: "User",
         required: true
       },
-      date: { type: Date, default: Date.now },
-      comments: [
-        {
-          date: { type: Date, default: Date.now },
-          author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-          message: { type: String, required: true }
-        }
-      ]
+      date: { type: Date, default: Date.now }
     },
     { versionKey: false }
   )
