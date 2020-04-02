@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 const { Router } = require("express");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
@@ -78,7 +79,7 @@ router.put("/reset", resetRules, (req, res) => {
         email: req.body.email
       }, {
         resetToken: buffer.toString("hex"),
-        resetTokenExp: Date.now() + 3_600_000
+        resetTokenExp: Date.now() + 3600000
       });
       await transporter.sendMail(resEmail(req.body.email, buffer.toString("hex")));
       res.status(200).json({
@@ -133,6 +134,20 @@ router.get("/profile", tokenMiddleware, async (req, res) => {
       email: user.email,
       role: user.role
     }
+  });
+});
+
+router.get("/notifications", tokenMiddleware, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  let notifications = [];
+  for (let notice of user.notification) {
+    if (notice.expiredTime >= Date.now()) {
+      notifications.push(notice)
+    }
+  }
+  await User.findByIdAndUpdate(req.user.id, {notification: notifications})
+  res.status(200).json({
+    notifications 
   });
 });
 

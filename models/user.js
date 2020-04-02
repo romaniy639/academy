@@ -12,7 +12,8 @@ module.exports = model(
       notification: [
         {
           author: { type: String },
-          message: { type: String }
+          message: { type: String },
+          expiredTime: { type: Date }
         }
       ],
       resetToken: { type: String },
