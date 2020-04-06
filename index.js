@@ -20,13 +20,13 @@ app.use(
   })
 );
 app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Expose-Headers", "authToken");
   res.set("Content-Type", "application/json");
   res.header(
     "Access-Control-Allow-Headers",
-    "Access-Control-Allow-Origin",
     "Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header, authToken"
   );
   next();
