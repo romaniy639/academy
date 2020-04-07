@@ -7,14 +7,14 @@ const authRouter = require("./routes/auth");
 const groupRouter = require("./routes/group");
 const scheduleRouter = require("./routes/schedule");
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ extended: true }));
 app.use(
   session({
-    secret: keys.SESSION_SECRET,
+    secret: SESSION_SECRET || keys.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
   })
@@ -48,7 +48,7 @@ app.use(function(err, req, res, next) {
 
 async function start() {
   try {
-    await mongoose.connect(keys.MONGODB_URI, {
+    await mongoose.connect(MONGODB_URI || keys.MONGODB_URI, {
       useNewUrlParser: true,
       useFindAndModify: false,
       useUnifiedTopology: true
