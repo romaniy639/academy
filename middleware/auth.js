@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
-const keys = require("../keys/index");
+//const keys = require("../keys/index");
 
 exports.tokenMiddleware = async function(req, res, next) {
   const token = req.header("authToken") || req.cookies.authToken;
   if (!token) return res.status(401).json({ message: "Auth Error" });
   try {
-    const decoded = jwt.verify(token, keys.SECRET_TOKEN);
+    const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
     req.user = decoded.user;
     next();
   } catch (e) {

@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const keys = require("./keys");
+//const keys = require("./keys");
 const authRouter = require("./routes/auth");
 const groupRouter = require("./routes/group");
 const scheduleRouter = require("./routes/schedule");
@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ extended: true }));
 app.use(
   session({
-    secret: SESSION_SECRET || keys.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
   })
@@ -48,7 +48,7 @@ app.use(function(err, req, res, next) {
 
 async function start() {
   try {
-    await mongoose.connect(MONGODB_URI || keys.MONGODB_URI, {
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useFindAndModify: false,
       useUnifiedTopology: true

@@ -9,7 +9,7 @@ const { tokenMiddleware } = require("../middleware/auth");
 const regEmail = require("../emails/registration");
 const resEmail = require("../emails/reset");
 const User = require("../models/user");
-const keys = require("../keys");
+//const keys = require("../keys");
 const {isAdminOrTeacherMiddleware} = require("../middleware/auth");
 const {
   loginRules,
@@ -20,7 +20,7 @@ const {
 } = require("../utils/validators");
 
 const router = new Router();
-const transporter = nodemailer.createTransport(sendgrid({ auth: { api_key: keys.SENDGRID_API_KEY } }));
+const transporter = nodemailer.createTransport(sendgrid({ auth: { api_key: process.env.SENDGRID_API_KEY } }));
 
 router.post("/register", tokenMiddleware, isAdminOrTeacherMiddleware, registerRules, async (req, res) => {
   try {
@@ -60,7 +60,7 @@ router.post("/login", loginRules, async (req, res) => {
         email: user.email,
         role: user.role
       }
-    }, keys.SECRET_TOKEN, { expiresIn: "24h" });
+    }, process.env.SECRET_TOKEN, { expiresIn: "24h" });
     res.status(200).json({ token, message: "Authentication successful!" });
   } catch (e) {
     next(e);
