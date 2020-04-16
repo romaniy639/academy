@@ -9,6 +9,7 @@ const { tokenMiddleware } = require("../middleware/auth");
 const regEmail = require("../emails/registration");
 const resEmail = require("../emails/reset");
 const User = require("../models/user");
+const Loc = require("../models/language")
 //const keys = require("../keys");
 const {isAdminOrTeacherMiddleware} = require("../middleware/auth");
 const {
@@ -168,6 +169,17 @@ router.put("/profile", tokenMiddleware, changePasswordRules, async (req, res) =>
     } else {
       res.status(422).json({ message: "Invalid old password..." });
     }
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get("/get_language", async (req, res) => {
+  try { 
+    const language = await Loc.findOne({ name: req.body.language });
+    res.status(200).json({
+      dictionary: language.dictionary
+    })
   } catch (e) {
     next(e);
   }
