@@ -3,6 +3,7 @@ const { Router } = require("express");
 const Group = require("../models/group");
 const { tokenMiddleware, isTeacherMiddleware } = require("../middleware/auth");
 const User = require("../models/user");
+const Schedule = require("../models/schedule");
 const {
   groupIdRules,
   addStudentRules,
@@ -54,6 +55,7 @@ router.put("/:id", tokenMiddleware, isTeacherMiddleware, groupEditRules, async (
 router.delete("/:id", tokenMiddleware, isTeacherMiddleware, groupDeleteRules, async (req, res) => {
   try {
     await User.updateMany({ group: req.params.id }, { $unset: { group: "" } });
+    await Schedule.findOneAndDelete({ group: req.params.id });
     const deletedGroup = await Group.findByIdAndDelete(req.params.id);
     res.status(200).json({ deletedGroup });
   } catch (e) {
