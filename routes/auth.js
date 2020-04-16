@@ -174,12 +174,18 @@ router.put("/profile", tokenMiddleware, changePasswordRules, async (req, res) =>
   }
 });
 
-router.get("/get_language", async (req, res) => {
+router.get("/get_language", tokenMiddleware, async (req, res) => {
   try { 
-    const language = await Loc.findOne({ name: req.body.language });
+    let language;
+    const data = await Loc.find();
+    if (req.body.language === "EN") {
+      language = data[0].dictionary;
+    } else {
+      language = data[1].dictionary;
+    }
     res.status(200).json({
-      dictionary: language.dictionary
-    })
+      dictionary: language
+    });
   } catch (e) {
     next(e);
   }
