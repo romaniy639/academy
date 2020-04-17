@@ -9,7 +9,7 @@ const { tokenMiddleware } = require("../middleware/auth");
 const regEmail = require("../emails/registration");
 const resEmail = require("../emails/reset");
 const User = require("../models/user");
-const Loc = require("../models/language")
+const Localization = require("../models/language")
 //const keys = require("../keys");
 const {isAdminOrTeacherMiddleware} = require("../middleware/auth");
 const {
@@ -17,7 +17,8 @@ const {
   registerRules,
   changePasswordRules,
   resetRules,
-  setPasswordRules
+  setPasswordRules,
+  languageRules
 } = require("../utils/validators");
 
 const router = new Router();
@@ -174,17 +175,13 @@ router.put("/profile", tokenMiddleware, changePasswordRules, async (req, res) =>
   }
 });
 
-router.get("/get_language", tokenMiddleware, async (req, res) => {
-  try { 
-    let language;
-    const data = await Loc.find();
-    if (req.body.language === "EN") {
-      language = data[0].dictionary;
-    } else {
-      language = data[1].dictionary;
-    }
+router.get("/language", languageRules, async (req, res) => {
+  try {
+    const { dictionary } = await Localization.findOne();
+    if (!Object.keys(dictionary).includes(req.body.language)) { req.body.language = "en"; }
     res.status(200).json({
-      dictionary: language
+      language: req.body.language,
+      dictionary: dictionary[req.body.language]
     });
   } catch (e) {
     next(e);

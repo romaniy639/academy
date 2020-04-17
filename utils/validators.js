@@ -2,6 +2,7 @@
 const User = require('../models/user')
 const Group = require('../models/group')
 const Schedule = require('../models/schedule')
+const Localization = require('../models/schedule')
 const bcrypt = require('bcryptjs')
 const { body, param } = require('express-validator')
 const { validationResult } = require("express-validator")
@@ -428,6 +429,15 @@ exports.scheduleEditRules = [
 
     return true
   }),
+
+  (req, res, next) => checkErrors(req, res, next)
+]
+
+exports.languageRules = [
+  body('language', 'Incorrect language format')
+    .exists()
+    .trim()
+    .isAlpha(),
 
   (req, res, next) => checkErrors(req, res, next)
 ]

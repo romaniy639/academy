@@ -1,11 +1,11 @@
 const { Schema, model } = require("mongoose");
 
 module.exports = model(
-  "Loc",
+  "Localization",
   new Schema(
     {
-        name: {type: String, required: true},
-        dictionary: {type: Object, required: true}
-    }
+      dictionary: { type: Object, required: true }
+    },
+    { versionKey: false }
   )
 );
